@@ -4,7 +4,7 @@ class RR :public Processor
 {
 	Queue<Process*> ReadyQueue;
 public:
-	RR(int num);
+	RR(Scheduler* sched_ptr,int num);
 	void SchedulerAlgo();
 	void AddToReady(Process* P);
 	void PrintReady();

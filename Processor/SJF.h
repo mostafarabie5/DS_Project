@@ -4,7 +4,7 @@ class SJF :public Processor
 {
     PriorityQueue<Process*> ReadyList;
 public:
-    SJF(int num);
+    SJF(Scheduler* sched_ptr,int num);
     void SchedulerAlgo();
     void AddToReady(Process* P);
     void PrintReady();

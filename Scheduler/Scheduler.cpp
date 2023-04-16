@@ -57,7 +57,7 @@ void Scheduler::SetNFCFS(int n)
 	PTR_FCFS = new Processor * [n];
 	for (int i = 0; i < NFCFS; i++)
 	{
-		PTR_FCFS[i] = new FCFS(i + 1);
+		PTR_FCFS[i] = new FCFS(this, i + 1);
 	}
 }
 
@@ -67,7 +67,7 @@ void Scheduler::SetNSJF(int n)
 	PTR_SJF = new Processor * [n];
 	for (int i = 0; i < NSJF; i++)
 	{
-		PTR_SJF[i] = new SJF(i + 1 + NFCFS);
+		PTR_SJF[i] = new SJF(this, i + 1 + NFCFS);
 	}
 }
 
@@ -77,7 +77,7 @@ void Scheduler::SetNRR(int n)
 	PTR_RR = new Processor * [n];
 	for (int i = 0; i < NRR; i++)
 	{
-		PTR_RR[i] = new RR((i + 1 + NFCFS + NSJF));
+		PTR_RR[i] = new RR(this, i + 1 + NFCFS + NSJF);
 	}
 }
 
@@ -170,42 +170,62 @@ void Scheduler::Simulate()
 	int f, s, r;
 	f = s = r = 0;
 	int TimeStep = 1;
-
+	int nf, ns, nr;
+	nf = ns = nr = 0;
 	while (TRM.Getcount() != NP)
 	{
 		if (!NEW.isEmpty())
 		{
 			Process* ptr;
-			NEW.peek(ptr);
-			while (ptr->getAT() == TimeStep) {
+			;
+
+			while (NEW.peek(ptr) && ptr->getAT() == TimeStep) {
 				NEW.dequeue(ptr);
-				bool b = false;
-				if (f == r && r == s && f == s && !b)
+
+				if (f == r && r == s && f == s)
 				{
-					if (f < NFCFS)
+					if (nf < NFCFS)
 					{
-						PTR_FCFS[f++]->AddToReady(ptr);
-						b = true;
+						PTR_FCFS[nf++]->AddToReady(ptr);
+
 					}
+					else
+					{
+						nf = 0;
+						PTR_FCFS[nf++]->AddToReady(ptr);
+
+					}
+					f++;
 				}
-				if (f > r && f > s && !b)
+				else if (f > r && f > s)
 				{
-					if (s < NSJF)
+					if (ns < NSJF)
 					{
-						PTR_SJF[s++]->AddToReady(ptr);
-						b = true;
+						PTR_SJF[ns++]->AddToReady(ptr);
+
 					}
+					else
+					{
+						ns = 0;
+						PTR_SJF[ns++]->AddToReady(ptr);
+					}
+					s++;
 				}
 
-				if (f == s && r < s && r < f && !b)
+				else if (f == s && r < s && r < f)
 				{
-					if (r < NRR)
+					if (nr < NRR)
 					{
-						PTR_RR[r++]->AddToReady(ptr);
-						b = true;
+						PTR_RR[nr++]->AddToReady(ptr);
+
 					}
+					else {
+						nr = 0;
+						PTR_RR[nr++]->AddToReady(ptr);
+
+					}
+					r++;
 				}
-				NEW.peek(ptr);
 			}
 		}
 		for (int i = 0;i < NFCFS;i++)
@@ -232,14 +252,65 @@ void Scheduler::Simulate()
 				PTR_RR[i]->Run();
 
 		}
+		srand(time(0));
+		int x = rand() % 100 + 1;
+		if (x < 10)
+		{
+			Process* p = nullptr;
+			BLK.dequeue(p);
+			if (f == r && r == s && f == s)
+			{
+				if (nf < NFCFS)
+				{
+					PTR_FCFS[nf++]->AddToReady(p);
 
+				}
+				else
+				{
+					nf = 0;
+					PTR_FCFS[nf++]->AddToReady(p);
 
+				}
+				f++;
+			}
+			else if (f > r && f > s)
+			{
+				if (ns < NSJF)
+				{
+					PTR_SJF[ns++]->AddToReady(p);
+
+				}
+				else
+				{
+					ns = 0;
+					PTR_SJF[ns++]->AddToReady(p);
+				}
+				s++;
+			}
+
+			else if (f == s && r < s && r < f)
+			{
+				if (nr < NRR)
+				{
+					PTR_RR[nr++]->AddToReady(p);
+
+				}
+				else {
+					nr = 0;
+					PTR_RR[nr++]->AddToReady(p);
+
+				}
+				r++;
+			}
+		}
 		UIPtr->UpdateInterface(this, TimeStep);
 		char c;
 		cin >> m;
 		TimeStep++;
-
 	}
+}
+
+
 
 
 
@@ -299,7 +370,7 @@ void Scheduler::Simulate()
 
 	//End = (NP == TRM.Getcount()) ? true : false;
 
-}
+
 
 int Scheduler::RunningProcessors() const
 {

@@ -35,9 +35,12 @@ inline void Queue<ItemType>::Print(int num, string s)const
 		cout << endl;
 		return;
 	}
-	while (curr)
+	while (curr!=NULL)
 	{
 		curr->getItem()->Print();
+		curr=curr->getNext();
+		if (curr)
+			cout << " , ";
 	}
 	cout << endl;
 }
@@ -51,6 +54,10 @@ inline void Queue<Pair>::Print(int num, string s)const
 	while (curr)
 	{
 		curr->getItem().Print();
+		curr = curr->getNext();
+		if (curr)
+			cout << " , ";
+
 	}
 	cout << endl;
 }
@@ -134,7 +141,9 @@ template<typename ItemType>
 bool Queue<ItemType>::dequeue(ItemType& frntEntry)
 {
 	if (isEmpty())
+	{
 		return false;
+	}
 
 	Node<ItemType>* nodeToDeletePtr = frontPtr;
 	frntEntry = frontPtr->getItem();
