@@ -1,4 +1,5 @@
 #include "Pair.h"
+#include<iostream>
 using namespace std;
 Pair::Pair()
 {
@@ -29,6 +30,12 @@ void Pair::operator=(const Pair& p)
 {
 	first = p.first;
 	second = p.second;
+
+}
+
+void Pair::Print()
+{
+	cout << "(" << first << "," << second << ")\n";
 }
 
 

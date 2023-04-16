@@ -18,25 +18,25 @@ public:
 	LinkedList();
 	LinkedList(const LinkedList<ItemType>& aList);
 	virtual ~LinkedList();
-	
+
 	bool isEmpty() const;
-	
+
 	int getLength() const;
-	
+
 	bool insert(int newPosition, const ItemType& newEntry);
 	void InsertBeg(const ItemType& data);
-	
+
 	void InsertEnd(const ItemType& data);
 	bool remove(int position);
-	
+
 	void clear();
-	
+	ItemType RemovBeg();
 	ItemType getEntry(int position) const;
-	
+
 	void setEntry(int position, const ItemType& newEntry);
 
 	void Print()const;
-	
+
 };
 
 
@@ -170,6 +170,14 @@ void LinkedList<ItemType>::clear()
 } // end clear
 
 template<class ItemType>
+inline ItemType LinkedList<ItemType>::RemovBeg()
+{
+	ItemType item = headPtr->getItem();
+	remove(1);
+	return item;
+}
+
+template<class ItemType>
 ItemType LinkedList<ItemType>::getEntry(int position) const
 {
 	// Enforce precondition
@@ -226,7 +234,10 @@ inline void LinkedList<Process*>::Print() const
 	std::cout << getLength() << " RDY: ";
 	Node<Process*>* curptr = headPtr;
 	if (!headPtr)
+	{
+		std::cout << endl;
 		return;
+	}
 
 	curptr->getItem()->Print();
 	curptr = curptr->getNext();
@@ -237,5 +248,6 @@ inline void LinkedList<Process*>::Print() const
 		curptr = curptr->getNext();
 	}
 	std::cout << std::endl;
+
 }
 

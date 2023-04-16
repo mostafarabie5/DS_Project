@@ -23,7 +23,7 @@ public:
 	Processor(Scheduler* P);
 
 	virtual void AddToReady(Process* P) = 0;
-	void AddToRun(Process* P);
+	virtual void AddToRun() = 0;
 	bool ProcessorState()const; // check if the processor is busy or idle when busy return true otherwise return false
 
 	int CalcPLoad();
@@ -34,6 +34,8 @@ public:
 	virtual void PrintRunningProcess()const;
 	virtual int CalcTimeToFinish() = 0;
 	virtual int NumRDY()const = 0;
+	virtual void Run() = 0;
+	void SetRunningProcess(Process* p);
 };
 
 #include"../Scheduler/Scheduler.h"

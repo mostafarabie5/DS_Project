@@ -26,8 +26,10 @@ public:
 	void SetCT(int ct);
 	void SetPID(int id);
 	void SetNUM_IO(int n);
-	void Load(std::ifstream& Infile);
+	void setPair(int first, int second);
 	void Print();
+	int getAT();
+	int getCT();
 	~Process();
 	friend bool operator>(Process p1, Process p2);
 	friend bool operator !=(Process p1, Process P2);

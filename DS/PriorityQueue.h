@@ -9,19 +9,19 @@ private:
 	// items in the priority queue
 public:
 	PriorityQueue();
-	
+
 	PriorityQueue(const PriorityQueue& pq);
-	
+
 	~PriorityQueue();
-	
+
 	bool isEmpty() const;
-	
+
 	bool add(const ItemType& newEntry);
-	
+
 	bool remove();
-	
+	ItemType removeBeg();
 	ItemType peek() const;
-	
+
 	int getLength()const;
 
 	void Print()const;
@@ -54,6 +54,14 @@ bool PriorityQueue<ItemType>::remove()
 	// The highest-priority item is at the end of the sorted list
 	return slistPtr->remove(slistPtr->getLength());
 } // end remove
+
+template<class ItemType>
+inline ItemType PriorityQueue<ItemType>::removeBeg()
+{
+	ItemType item = peek();
+	slistPtr->remove(1);
+	return item;
+}
 
 template<class ItemType>
 ItemType PriorityQueue<ItemType>::peek() const

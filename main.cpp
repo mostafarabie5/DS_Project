@@ -7,11 +7,13 @@ using namespace std;
 
 int main()
 {
-	Scheduler* s = new Scheduler;
+	/*Scheduler* s = new Scheduler;
 	s->SetNFCFS(2);
 	s->SetNRR(1);
 	s->SetNSJF(1);
-	s->Simulate();
+	s->Simulate();*/
+	Scheduler master;
+	master.Simulate();
 
-
+	return 0;
 }
