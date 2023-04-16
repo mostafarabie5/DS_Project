@@ -95,9 +95,6 @@
     <ClCompile Include="Processor\FCFS.cpp">
       <Filter>Processor</Filter>
     </ClCompile>
-    <ClCompile Include="Processor\Process.cpp">
-      <Filter>Processor</Filter>
-    </ClCompile>
     <ClCompile Include="Processor\Processor.cpp">
       <Filter>Processor</Filter>
     </ClCompile>
@@ -107,11 +104,11 @@
     <ClCompile Include="Processor\SJF.cpp">
       <Filter>Processor</Filter>
     </ClCompile>
-    <ClCompile Include="Process\Process.cpp">
-      <Filter>Process</Filter>
-    </ClCompile>
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Process\Process.cpp">
+      <Filter>Process</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

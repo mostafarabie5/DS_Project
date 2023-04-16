@@ -2,7 +2,7 @@
 #include "SortedListInterface.h"
 #include"Node.h"
 #include<iostream>
-#include"Process.h"
+#include"../Process/Process.h"
 using namespace std;
 template<class ItemType>
 class LinkedSortedList :public SortedListInterface<ItemType>

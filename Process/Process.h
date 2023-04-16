@@ -34,5 +34,3 @@ public:
 	friend std::ostream& operator <<(std::ostream& out, Process p);
 };
 
-
-

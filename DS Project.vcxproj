@@ -149,7 +149,6 @@
     <ClCompile Include="DS\Pair.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Processor\FCFS.cpp" />
-    <ClCompile Include="Processor\Process.cpp" />
     <ClCompile Include="Processor\Processor.cpp" />
     <ClCompile Include="Processor\RR.cpp" />
     <ClCompile Include="Processor\SJF.cpp" />

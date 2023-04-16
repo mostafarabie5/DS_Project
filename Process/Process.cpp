@@ -49,7 +49,7 @@ void Process::Load(std::ifstream& Infile)
 	{
 		Pair p;
 		int n1, n2;
-		Infile >>n1  >>n2;
+		Infile >> n1 >> n2;
 		p.setFirst(n1); p.setSecond(n2);
 		IO.enqueue(p);
 	}
