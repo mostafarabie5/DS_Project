@@ -1,0 +1,117 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="DS">
+      <UniqueIdentifier>{adf3b402-10d7-4ab4-b538-99e5fd3b641c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Process">
+      <UniqueIdentifier>{49e1d73f-8eca-41a8-9064-5d7ab8d6303c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Processor">
+      <UniqueIdentifier>{b4ebc7ab-60ae-4883-82c7-1f7ae865cb04}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI">
+      <UniqueIdentifier>{6df637d7-2e6d-45d1-a379-66ef40f77b84}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scheduler">
+      <UniqueIdentifier>{2f2da009-3bef-4d09-9ea4-129e7313edf0}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="DS\LinkedList.h">
+      <Filter>DS</Filter>
+    </ClInclude>
+    <ClInclude Include="DS\LinkedSortedList.h">
+      <Filter>DS</Filter>
+    </ClInclude>
+    <ClInclude Include="DS\ListInterface.h">
+      <Filter>DS</Filter>
+    </ClInclude>
+    <ClInclude Include="DS\Node.h">
+      <Filter>DS</Filter>
+    </ClInclude>
+    <ClInclude Include="DS\Pair.h">
+      <Filter>DS</Filter>
+    </ClInclude>
+    <ClInclude Include="DS\PriorityQueue.h">
+      <Filter>DS</Filter>
+    </ClInclude>
+    <ClInclude Include="DS\PriorityQueueInterface.h">
+      <Filter>DS</Filter>
+    </ClInclude>
+    <ClInclude Include="DS\Queue.h">
+      <Filter>DS</Filter>
+    </ClInclude>
+    <ClInclude Include="DS\QueueADT.h">
+      <Filter>DS</Filter>
+    </ClInclude>
+    <ClInclude Include="DS\SortedListInterface.h">
+      <Filter>DS</Filter>
+    </ClInclude>
+    <ClInclude Include="Scheduler\Scheduler.h">
+      <Filter>Scheduler</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\UI.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Processor\FCFS.h">
+      <Filter>Processor</Filter>
+    </ClInclude>
+    <ClInclude Include="Processor\Processor.h">
+      <Filter>Processor</Filter>
+    </ClInclude>
+    <ClInclude Include="Processor\RR.h">
+      <Filter>Processor</Filter>
+    </ClInclude>
+    <ClInclude Include="Processor\SJF.h">
+      <Filter>Processor</Filter>
+    </ClInclude>
+    <ClInclude Include="Process\Process.h">
+      <Filter>Process</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="DS\Pair.cpp">
+      <Filter>DS</Filter>
+    </ClCompile>
+    <ClCompile Include="Scheduler\Scheduler.cpp">
+      <Filter>Scheduler</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\UI.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Processor\FCFS.cpp">
+      <Filter>Processor</Filter>
+    </ClCompile>
+    <ClCompile Include="Processor\Process.cpp">
+      <Filter>Processor</Filter>
+    </ClCompile>
+    <ClCompile Include="Processor\Processor.cpp">
+      <Filter>Processor</Filter>
+    </ClCompile>
+    <ClCompile Include="Processor\RR.cpp">
+      <Filter>Processor</Filter>
+    </ClCompile>
+    <ClCompile Include="Processor\SJF.cpp">
+      <Filter>Processor</Filter>
+    </ClCompile>
+    <ClCompile Include="Process\Process.cpp">
+      <Filter>Process</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
