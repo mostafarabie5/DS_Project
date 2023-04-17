@@ -4,9 +4,9 @@ UI::UI()
 
 }
 
-void UI::UpdateInterface(Scheduler* SchedPtr, int count)
+void UI::UpdateInterface(Scheduler* SchedPtr)
 {
-	cout << "Current Timestep:" << count << endl;
+	//cout << "Current Timestep:" << count << endl;
 	cout << "------------------------------- RDY Processes --------------------------\n";
 	SchedPtr->PrintProcessor();
 	cout << endl;

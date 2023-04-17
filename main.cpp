@@ -13,6 +13,9 @@ int main()
 	s->SetNSJF(1);
 	s->Simulate();*/
 	Scheduler master;
+	master.SetNFCFS(2);
+	master.SetNSJF(1);
+	master.SetNRR(1);
 	master.Simulate();
 
 	return 0;

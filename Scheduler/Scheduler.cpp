@@ -165,7 +165,151 @@ int Scheduler::GetNRR() const
 
 void Scheduler::Simulate()
 {
-	string m = ReadFileName();
+	Queue<Pair> q;
+	Process* pp = new Process(5, 1, 22, q);
+	PTR_FCFS = new Processor * [2];
+	PTR_FCFS[0] = new FCFS(this,1);
+	PTR_FCFS[1] = new FCFS(this,5);
+	PTR_SJF = new Processor * [1];
+	PTR_SJF[0] = new SJF(this,2);
+	PTR_RR = new Processor * [1];
+	PTR_RR[0] = new RR(this,3);
+	PTR_FCFS[0]->AddToReady(pp);
+	pp = new Process(7, 2, 20, q);
+	PTR_SJF[0]->AddToReady(pp);
+	pp = new Process(13, 3, 30, q);
+	PTR_RR[0]->AddToReady(pp);
+	pp = new Process(20, 10, 44, q);
+	PTR_FCFS[1]->AddToReady(pp);
+	pp = new Process(25, 11, 44, q);
+	PTR_RR[0]->AddToReady(pp);
+	pp = new Process(26, 13, 44, q);
+	PTR_RR[0]->AddToReady(pp);
+	pp = new Process(28, 14, 10, q);
+	PTR_SJF[0]->AddToReady(pp);
+	pp = new Process(36, 15, 5, q);
+	PTR_SJF[0]->AddToReady(pp);
+	pp = new Process(46, 17, 60, q);
+	PTR_SJF[0]->AddToReady(pp);
+	
+
+
+
+	UIPtr->UpdateInterface(this);
+	PTR_RR[0]->AddToRun();
+	UIPtr->UpdateInterface(this);
+	// 
+	//UIPtr->UpdateInterface(this);
+
+	
+}
+
+
+
+
+
+
+
+
+
+
+	
+
+	//string FileName = UIPtr->ReadFileName();
+
+	/*int n = UIPtr->ReadMode();
+	Load(FileName);*/
+
+	// check the mode 
+	//// check new  
+	/// check ready of the ideal processor 
+	/// print 
+	///
+	///  call Scheduler of each process
+
+
+
+
+	//End = (NP == TRM.Getcount()) ? true : false;
+
+
+
+int Scheduler::RunningProcessors() const
+{
+	int count = 0;
+	for (int i = 0; i < NFCFS; i++)
+	{
+		if (PTR_FCFS[i]->ProcessorState())
+			count++;
+	}
+	for (int i = 0; i < NSJF; i++)
+	{
+		if (PTR_SJF[i]->ProcessorState())
+			count++;
+	}
+	for (int i = 0; i < NRR; i++)
+	{
+		if (PTR_RR[i]->ProcessorState())
+			count++;
+	}
+	return count;
+}
+
+void Scheduler::PrintProcessor()
+{
+	for (int i = 0; i < NFCFS; i++)
+	{
+		PTR_FCFS[i]->PrintReady();
+	}
+	for (int i = 0; i < NSJF; i++)
+	{
+		PTR_SJF[i]->PrintReady();
+	}
+	for (int i = 0; i < NRR; i++)
+	{
+		PTR_RR[i]->PrintReady();
+	}
+	//// loop to print one processor of each type 
+}
+
+void Scheduler::PrintBLK()
+{
+	BLK.Print(BLK.Getcount(), " BLK: ");
+}
+
+void Scheduler::PrintTRM()
+{
+	TRM.Print(TRM.Getcount(), " TRM: ");
+}
+
+void Scheduler::PrintRUN()
+{
+	for (int i = 0; i < NFCFS; i++)
+	{
+		if (PTR_FCFS[i]->ProcessorState())
+			PTR_FCFS[i]->PrintRunningProcess();
+	}
+	for (int i = 0; i < NSJF; i++)
+	{
+		if (PTR_SJF[i]->ProcessorState())
+			PTR_SJF[i]->PrintRunningProcess();
+	}
+	for (int i = 0; i < NRR; i++)
+	{
+		if (PTR_RR[i]->ProcessorState())
+			PTR_RR[i]->PrintRunningProcess();
+	}
+}
+
+string Scheduler::ReadFileName()
+{
+	string m;
+	cin >> m;
+	return string(m);
+}
+
+
+/*string m = ReadFileName();
 	Load(m);
 	int f, s, r;
 	f = s = r = 0;
@@ -306,142 +450,4 @@ void Scheduler::Simulate()
 		UIPtr->UpdateInterface(this, TimeStep);
 		char c;
 		cin >> m;
-		TimeStep++;
-	}
-}
-
-
-
-
-
-
-
-
-
-
-	/*Queue<Pair> q;
-	Process* pp = new Process(5, 1, 22, q);
-	PTR_FCFS = new Processor * [2];
-	PTR_FCFS[0] = new FCFS(1);
-	PTR_FCFS[1] = new FCFS(5);
-	PTR_SJF = new Processor * [1];
-	PTR_SJF[0] = new SJF(2);
-	PTR_RR = new Processor * [1];
-	PTR_RR[0] = new RR(3);
-	PTR_FCFS[0]->AddToReady(pp);
-	pp = new Process(7, 2, 20, q);
-	PTR_SJF[0]->AddToReady(pp);
-	pp = new Process(13, 3, 30, q);
-	PTR_RR[0]->AddToReady(pp);
-	pp = new Process(20, 10, 44, q);
-	PTR_FCFS[1]->AddToReady(pp);
-	pp = new Process(25, 11, 44, q);
-	PTR_RR[0]->AddToReady(pp);
-	pp = new Process(26, 13, 44, q);
-	PTR_RR[0]->AddToReady(pp);
-	pp = new Process(28, 14, 10, q);
-	PTR_SJF[0]->AddToReady(pp);
-	pp = new Process(36, 15, 5, q);
-	PTR_SJF[0]->AddToReady(pp);
-	pp = new Process(46, 17, 60, q);
-	PTR_SJF[0]->AddToReady(pp);
-
-
-
-	UIPtr->UpdateInterface(this,5);
-	UIPtr->UpdateInterface(this, 6);
-	UIPtr->UpdateInterface(this, 7);*/
-
-
-	//string FileName = UIPtr->ReadFileName();
-
-	/*int n = UIPtr->ReadMode();
-	Load(FileName);*/
-
-	// check the mode 
-	//// check new  
-	/// check ready of the ideal processor 
-	/// print 
-	///
-	///  call Scheduler of each process
-
-
-
-
-	//End = (NP == TRM.Getcount()) ? true : false;
-
-
-
-int Scheduler::RunningProcessors() const
-{
-	int count = 0;
-	for (int i = 0; i < NFCFS; i++)
-	{
-		if (PTR_FCFS[i]->ProcessorState())
-			count++;
-	}
-	for (int i = 0; i < NSJF; i++)
-	{
-		if (PTR_SJF[i]->ProcessorState())
-			count++;
-	}
-	for (int i = 0; i < NRR; i++)
-	{
-		if (PTR_RR[i]->ProcessorState())
-			count++;
-	}
-	return count;
-}
-
-void Scheduler::PrintProcessor()
-{
-	for (int i = 0; i < NFCFS; i++)
-	{
-		PTR_FCFS[i]->PrintReady();
-	}
-	for (int i = 0; i < NSJF; i++)
-	{
-		PTR_SJF[i]->PrintReady();
-	}
-	for (int i = 0; i < NRR; i++)
-	{
-		PTR_RR[i]->PrintReady();
-	}
-	//// loop to print one processor of each type 
-}
-
-void Scheduler::PrintBLK()
-{
-	BLK.Print(BLK.Getcount(), " BLK: ");
-}
-
-void Scheduler::PrintTRM()
-{
-	TRM.Print(TRM.Getcount(), " TRM: ");
-}
-
-void Scheduler::PrintRUN()
-{
-	for (int i = 0; i < NFCFS; i++)
-	{
-		if (PTR_FCFS[i]->ProcessorState())
-			PTR_FCFS[i]->PrintRunningProcess();
-	}
-	for (int i = 0; i < NSJF; i++)
-	{
-		if (PTR_SJF[i]->ProcessorState())
-			PTR_SJF[i]->PrintRunningProcess();
-	}
-	for (int i = 0; i < NRR; i++)
-	{
-		if (PTR_RR[i]->ProcessorState())
-			PTR_RR[i]->PrintRunningProcess();
-	}
-}
-
-string Scheduler::ReadFileName()
-{
-	string m;
-	cin >> m;
-	return string(m);
-}
+		TimeStep++;*/
