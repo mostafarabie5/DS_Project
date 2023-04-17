@@ -4,19 +4,21 @@ UI::UI()
 
 }
 
-void UI::UpdateInterface(Scheduler* SchedPtr,int count)
+void UI::UpdateInterface(Scheduler* SchedPtr, int count)
 {
 	cout << "Current Timestep:" << count << endl;
-	cout << "------------------------------- RDY Processes ------------------\n";
+	cout << "------------------------------- RDY Processes --------------------------\n";
 	SchedPtr->PrintProcessor();
-	cout << "-------------BLK Processes ---------------------------\n";
+	cout << endl;
+	cout << "-------------------------------BLK Processes ---------------------------\n";
 	SchedPtr->PrintBLK();
-	cout << "--------------- RUN Processes --------------------------\n";
+	cout << "-------------------------------RUN Processes ---------------------------\n";
 	cout << SchedPtr->RunningProcessors() << " RUN: ";
 	SchedPtr->PrintRUN();
 	cout << endl;
-	cout << "-------------------- TRM processes -----------------------\n";
+	cout << "-------------------------------TRM processes ---------------------------\n";
 	SchedPtr->PrintTRM();
+	cout << endl;
 	cout << "PRESS ANY KEY TO MOVE TO NEXT STEP !\n\n\n";
 	///cin from the user the mode of output 
 	///// print RTM

@@ -32,9 +32,27 @@ void Process::SetNUM_IO(int n)
 	NUM_IO = n;
 }
 
+void Process::setPair(int first, int second)
+{
+	Pair p;
+	p.setFirst(first);
+	p.setSecond(second);
+	IO.enqueue(p);
+}
+
 void Process::Print()
 {
 	std::cout << PID;
+}
+
+int Process::getAT()
+{
+	return AT;
+}
+
+int Process::getCT()
+{
+	return CT;
 }
 
 Process::~Process()
@@ -42,18 +60,6 @@ Process::~Process()
 
 }
 
-void Process::Load(std::ifstream& Infile)
-{
-	Infile >> AT >> PID >> CT >> NUM_IO;
-	for (int i = 0; i < NUM_IO; i++)
-	{
-		Pair p;
-		int n1, n2;
-		Infile >> n1 >> n2;
-		p.setFirst(n1); p.setSecond(n2);
-		IO.enqueue(p);
-	}
-}
 
 std::ostream& operator<<(std::ostream& out, Process p)
 {

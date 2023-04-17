@@ -19,7 +19,7 @@ public:
 	bool enqueue(const ItemType& newEntry);
 	bool dequeue(ItemType& frntEntry);
 	bool peek(ItemType& frntEntry)  const;
-	void Print(int num,string s)const;
+	void Print(int num, string s)const;
 	int Getcount()const;
 	//void operator =(Queue<ItemType> q);
 	~Queue();
@@ -28,14 +28,39 @@ public:
 template <class ItemType>
 inline void Queue<ItemType>::Print(int num, string s)const
 {
-
+	cout << num << s;
+	Node<ItemType>* curr = frontPtr;
+	if (!curr)
+	{
+		cout << endl;
+		return;
+	}
+	while (curr!=NULL)
+	{
+		curr->getItem()->Print();
+		curr=curr->getNext();
+		if (curr)
+			cout << " , ";
+	}
+	cout << endl;
 }
-//template<>
-//inline void Queue<Process*>::Print(int num, string s)const
-//{
-//	cout << num << s;
-//	Node<Process*> curptr;
-//}
+template<>
+inline void Queue<Pair>::Print(int num, string s)const
+{
+	cout << num << s;
+	Node<Pair>* curr = frontPtr;
+	if (!curr)
+		return;
+	while (curr)
+	{
+		curr->getItem().Print();
+		curr = curr->getNext();
+		if (curr)
+			cout << " , ";
+
+	}
+	cout << endl;
+}
 
 //template<>
 //inline void Queue<Process*>::Print(int num, std::string s)const
@@ -116,7 +141,9 @@ template<typename ItemType>
 bool Queue<ItemType>::dequeue(ItemType& frntEntry)
 {
 	if (isEmpty())
+	{
 		return false;
+	}
 
 	Node<ItemType>* nodeToDeletePtr = frontPtr;
 	frntEntry = frontPtr->getItem();

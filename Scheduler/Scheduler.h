@@ -73,7 +73,7 @@ public:
 	void PrintBLK();
 	void PrintTRM();
 	void PrintRUN();
-
+	string  ReadFileName();
 
 	//bool EndProgram();
 

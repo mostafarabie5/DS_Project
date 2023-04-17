@@ -22,11 +22,6 @@ int Processor::CalcPutil()
 	return Total_Busy / (Total_TRT + Total_Idle);
 }
 
-void Processor::AddToRun(Process* P)
-{
-	RunningProcess = P;
-}
-
 bool Processor::ProcessorState() const
 {
 	if (RunningProcess)
@@ -43,6 +38,11 @@ void Processor::PrintRunningProcess() const
 {
 	RunningProcess->Print();
 	std::cout << "(P" << ProcessorNumber << "), ";
+}
+
+void Processor::SetRunningProcess(Process* p)
+{
+	RunningProcess = p;
 }
 
 

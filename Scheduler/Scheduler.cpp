@@ -1,4 +1,6 @@
 #include "Scheduler.h"
+#include<iostream>
+
 Scheduler::Scheduler()
 {
 
@@ -6,63 +8,47 @@ Scheduler::Scheduler()
 
 void Scheduler::Load(string FileName)
 {
-	//Infile.open("text");
-	//int n_f, n_s, n_r;
-	//Infile >> n_f >> n_s >> n_r;
-	//SetNFCFS(n_f);
-	//SetNSJF(n_s);
-	//SetNRR(n_r);
+	Infile.open(FileName + ".txt", ios::in);
+	int n_f, n_s, n_r;
+	Infile >> n_f >> n_s >> n_r;
+	SetNFCFS(n_f);
+	SetNSJF(n_s);
+	SetNRR(n_r);
 
-
-	//Infile >> TS;
-	//Infile >> RTF >> MAXW >> STL >> fork;
-	//Infile >> NP;
-	//for (int i = 0; i < NP; i++)
-	//{
-	//	int AT, PID, CT, NUM_IO;
-	//	Pair IO;
-	//	Queue<Pair>IO_Time;
-	//	Infile >> AT >> PID >> CT >> NUM_IO;
-	//	for (int i = 0; i < NUM_IO; i++)
-	//	{
-	//		//Infile >> IO.First;
-	//		while (1)
-	//		{
-	//			if (Infile.fail())
-	//			{
-	//				Infile.clear();
-	//				Infile.ignore(numeric_limits<streamsize>::max(), '\n');
-	//				Infile >> IO.First;
-	//			}
-	//			if (!cin.fail())
-	//				break;
-	//		}
-	//		Infile >> IO.Second;
-	//		while (1)
-	//		{
-	//			if (Infile.fail())
-	//			{
-	//				Infile.clear();
-	//				Infile.ignore(numeric_limits<streamsize>::max(), '\n');
-	//				Infile >> IO.Second;
-	//			}
-	//			if (!cin.fail())
-	//				break;
-	//		}
-
-	//		IO_Time.enqueue(IO);
-	//	}
-
-	//	Process* p = new Process(AT, PID, CT, IO_Time);
-	//	AddToNEW(p);
-	//}
-	//while (!Infile.eof())
-	//{
-	//	Pair s;
-	//	Infile >> s.First >> s.Second;
-	//	SIGKILL.enqueue(s);
-	//}
-
+	int ts;
+	Infile >> ts;
+	SetTS(ts);
+	Infile >> RTF >> MAXW >> STL >> fork;
+	Infile >> NP;
+	for (int i = 0; i < NP; i++)
+	{
+		int AT, PID, CT, NUM_IO;
+		Infile >> AT >> PID >> CT >> NUM_IO;
+		Process* ptr = new Process;
+		ptr->SetAT(AT);
+		ptr->SetCT(CT);
+		ptr->SetNUM_IO(NUM_IO);
+		ptr->SetPID(PID);
+		for (int j = 0; j < NUM_IO;j++)
+		{
+			int first, second;
+			char c;
+			Infile >> c >> first >> c >> second >> c;
+			ptr->setPair(first, second);
+			if (j != NUM_IO - 1)
+				Infile >> c;
+		}
+		NEW.enqueue(ptr);
+	}
+	while (!Infile.eof())
+	{
+		int first, second;
+		Infile >> first >> second;
+		Pair p;
+		p.setFirst(first);
+		p.setSecond(second);
+		SIGKILL.enqueue(p);
+	}
 }
 
 void Scheduler::SetNFCFS(int n)
@@ -71,7 +57,7 @@ void Scheduler::SetNFCFS(int n)
 	PTR_FCFS = new Processor * [n];
 	for (int i = 0; i < NFCFS; i++)
 	{
-		PTR_FCFS[i] = new FCFS( i + 1);
+		PTR_FCFS[i] = new FCFS(this, i + 1);
 	}
 }
 
@@ -81,7 +67,7 @@ void Scheduler::SetNSJF(int n)
 	PTR_SJF = new Processor * [n];
 	for (int i = 0; i < NSJF; i++)
 	{
-		PTR_SJF[i] = new SJF( i + 1 + NFCFS);
+		PTR_SJF[i] = new SJF(this, i + 1 + NFCFS);
 	}
 }
 
@@ -91,7 +77,7 @@ void Scheduler::SetNRR(int n)
 	PTR_RR = new Processor * [n];
 	for (int i = 0; i < NRR; i++)
 	{
-		PTR_RR[i] = new RR( (i + 1 + NFCFS + NSJF));
+		PTR_RR[i] = new RR(this, i + 1 + NFCFS + NSJF);
 	}
 }
 
@@ -179,8 +165,161 @@ int Scheduler::GetNRR() const
 
 void Scheduler::Simulate()
 {
+	string m = ReadFileName();
+	Load(m);
+	int f, s, r;
+	f = s = r = 0;
+	int TimeStep = 1;
+	int nf, ns, nr;
+	nf = ns = nr = 0;
+	while (TRM.Getcount() != NP)
+	{
+		if (!NEW.isEmpty())
+		{
+			Process* ptr;
+			;
 
-	Queue<Pair> q;
+			while (NEW.peek(ptr) && ptr->getAT() == TimeStep) {
+				NEW.dequeue(ptr);
+
+				if (f == r && r == s && f == s)
+				{
+					if (nf < NFCFS)
+					{
+						PTR_FCFS[nf++]->AddToReady(ptr);
+
+					}
+					else
+					{
+						nf = 0;
+						PTR_FCFS[nf++]->AddToReady(ptr);
+
+					}
+					f++;
+				}
+				else if (f > r && f > s)
+				{
+					if (ns < NSJF)
+					{
+						PTR_SJF[ns++]->AddToReady(ptr);
+
+					}
+					else
+					{
+						ns = 0;
+						PTR_SJF[ns++]->AddToReady(ptr);
+					}
+					s++;
+				}
+
+				else if (f == s && r < s && r < f)
+				{
+					if (nr < NRR)
+					{
+						PTR_RR[nr++]->AddToReady(ptr);
+
+					}
+					else {
+						nr = 0;
+						PTR_RR[nr++]->AddToReady(ptr);
+
+					}
+					r++;
+				}
+			}
+		}
+		for (int i = 0;i < NFCFS;i++)
+		{
+			if (!PTR_FCFS[i]->ProcessorState())
+				PTR_FCFS[i]->AddToRun();
+			else
+				PTR_FCFS[i]->Run();
+
+		}
+		for (int i = 0;i < NSJF;i++)
+		{
+			if (!PTR_SJF[i]->ProcessorState())
+				PTR_SJF[i]->AddToRun();
+			else
+				PTR_SJF[i]->Run();
+
+		}
+		for (int i = 0;i < NRR;i++)
+		{
+			if (!PTR_RR[i]->ProcessorState())
+				PTR_RR[i]->AddToRun();
+			else
+				PTR_RR[i]->Run();
+
+		}
+		srand(time(0));
+		int x = rand() % 100 + 1;
+		if (x < 10)
+		{
+			Process* p = nullptr;
+			BLK.dequeue(p);
+			if (f == r && r == s && f == s)
+			{
+				if (nf < NFCFS)
+				{
+					PTR_FCFS[nf++]->AddToReady(p);
+
+				}
+				else
+				{
+					nf = 0;
+					PTR_FCFS[nf++]->AddToReady(p);
+
+				}
+				f++;
+			}
+			else if (f > r && f > s)
+			{
+				if (ns < NSJF)
+				{
+					PTR_SJF[ns++]->AddToReady(p);
+
+				}
+				else
+				{
+					ns = 0;
+					PTR_SJF[ns++]->AddToReady(p);
+				}
+				s++;
+			}
+
+			else if (f == s && r < s && r < f)
+			{
+				if (nr < NRR)
+				{
+					PTR_RR[nr++]->AddToReady(p);
+
+				}
+				else {
+					nr = 0;
+					PTR_RR[nr++]->AddToReady(p);
+
+				}
+				r++;
+			}
+		}
+		UIPtr->UpdateInterface(this, TimeStep);
+		char c;
+		cin >> m;
+		TimeStep++;
+	}
+}
+
+
+
+
+
+
+
+
+
+
+	/*Queue<Pair> q;
 	Process* pp = new Process(5, 1, 22, q);
 	PTR_FCFS = new Processor * [2];
 	PTR_FCFS[0] = new FCFS(1);
@@ -211,7 +350,7 @@ void Scheduler::Simulate()
 
 	UIPtr->UpdateInterface(this,5);
 	UIPtr->UpdateInterface(this, 6);
-	UIPtr->UpdateInterface(this, 7);
+	UIPtr->UpdateInterface(this, 7);*/
 
 
 	//string FileName = UIPtr->ReadFileName();
@@ -231,7 +370,7 @@ void Scheduler::Simulate()
 
 	//End = (NP == TRM.Getcount()) ? true : false;
 
-}
+
 
 int Scheduler::RunningProcessors() const
 {
@@ -295,7 +434,14 @@ void Scheduler::PrintRUN()
 	}
 	for (int i = 0; i < NRR; i++)
 	{
-		if (PTR_FCFS[i]->ProcessorState())
-			PTR_FCFS[i]->PrintRunningProcess();
+		if (PTR_RR[i]->ProcessorState())
+			PTR_RR[i]->PrintRunningProcess();
 	}
+}
+
+string Scheduler::ReadFileName()
+{
+	string m;
+	cin >> m;
+	return string(m);
 }

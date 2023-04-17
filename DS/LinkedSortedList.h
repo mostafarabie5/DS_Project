@@ -16,41 +16,41 @@ private:
 	// @return Either a pointer to the node before the node that contains
 	// or should contain the given entry, or nullptr if no prior node exists.
 	Node<ItemType>* getNodeBefore(const ItemType& anEntry) const;
-	
+
 
 
 	// Locates the node at a given position within the chain.
 	Node<ItemType>* getNodeAt(int position) const;
-	
+
 
 	// Returns a pointer to a copy of the chain to which origChainPtr points.
 	Node<ItemType>* copyChain(const Node<ItemType>* origChainPtr);
-	
+
 
 public:
 	LinkedSortedList();
 
 	LinkedSortedList(const LinkedSortedList<ItemType>& aList);
-	
+
 	virtual ~LinkedSortedList();
-	
+
 	void insertSorted(const ItemType& newEntry);
-	
+
 	bool removeSorted(const ItemType& anEntry);
-	
+
 	int getPosition(const ItemType& anEntry)const;
-	
+
 	// The following methods are the same as given in ListInterface:
 	bool isEmpty() const;
-	
+
 	int getLength() const;
-	
+
 	bool remove(int position);
-	
+
 	void clear();
-	
+
 	ItemType getEntry(int position) const;
-	
+
 	void Print()const;
 }; // end LinkedSortedList
 
@@ -60,7 +60,7 @@ Node<ItemType>* LinkedSortedList<ItemType>::getNodeBefore(const ItemType& anEntr
 {
 	Node<ItemType>* curPtr = headPtr;
 	Node<ItemType>* prevPtr = nullptr;
-	while ((curPtr != nullptr) && (anEntry > curPtr->getItem()))
+	while ((curPtr != nullptr) && (anEntry->getCT() > curPtr->getItem()->getCT()))
 	{
 		prevPtr = curPtr;
 		curPtr = curPtr->getNext();
@@ -244,19 +244,22 @@ ItemType LinkedSortedList<ItemType>::getEntry(int position) const
 template<class ItemType>
 inline void LinkedSortedList<ItemType>::Print() const
 {
-	cout << getLength() << " RDY: ";
+	std::cout << getLength() << " RDY: ";
 	Node<ItemType>* curptr = headPtr;
 	if (!headPtr)
+	{
+		cout << endl;
 		return;
+	}
 
-	cout << curptr->getItem();
+	std::cout << curptr->getItem();
 	curptr = curptr->getNext();
 	while (curptr)
 	{
-		cout << ", " << curptr->getItem();
+		std::cout << ", " << curptr->getItem();
 		curptr = curptr->getNext();
 	}
-	cout << endl;
+	std::cout << endl;
 }
 
 template<>
@@ -265,7 +268,10 @@ inline void LinkedSortedList<Process*>::Print() const
 	cout << getLength() << " RDY: ";
 	Node<Process*>* curptr = headPtr;
 	if (!headPtr)
+	{
+		cout << endl;
 		return;
+	}
 
 	curptr->getItem()->Print();
 	curptr = curptr->getNext();
