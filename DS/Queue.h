@@ -5,6 +5,8 @@
 #include"../Process/Process.h"
 using namespace std;
 
+class Process;
+
 template<class ItemType>
 class Queue :public QueueADT<ItemType>
 {
@@ -34,9 +36,9 @@ inline void Queue<ItemType>::Print(int num, string s)const
 		cout << endl;
 		return;
 	}
-	while (curr!=NULL)
+	while (curr)
 	{
-		curr->getItem()->Print();
+		cout << curr->getItem();
 		curr=curr->getNext();
 		if (curr)
 			cout << " , ";

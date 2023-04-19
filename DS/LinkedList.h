@@ -30,7 +30,7 @@ public:
 	bool remove(int position);
 
 	void clear();
-	ItemType RemovBeg();
+	
 	ItemType getEntry(int position) const;
 
 	void setEntry(int position, const ItemType& newEntry);
@@ -209,7 +209,10 @@ inline void LinkedList<ItemType>::Print() const
 	std::cout << getLength() << " RDY: ";
 	Node<ItemType>* curptr = headPtr;
 	if (!headPtr)
+	{
+		cout << endl;
 		return;
+	}
 
 	std::cout << curptr->getItem();
 	curptr = curptr->getNext();
@@ -221,26 +224,4 @@ inline void LinkedList<ItemType>::Print() const
 	std::cout << std::endl;
 }
 
-template<>
-inline void LinkedList<Process*>::Print() const
-{
-	std::cout << getLength() << " RDY: ";
-	Node<Process*>* curptr = headPtr;
-	if (!headPtr)
-	{
-		std::cout << endl;
-		return;
-	}
-
-	curptr->getItem()->Print();
-	curptr = curptr->getNext();
-	while (curptr)
-	{
-		std::cout << ", ";
-		curptr->getItem()->Print();
-		curptr = curptr->getNext();
-	}
-	std::cout << std::endl;
-
-}
 

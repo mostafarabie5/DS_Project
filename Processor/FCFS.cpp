@@ -97,37 +97,13 @@ void FCFS::Run()
 		SetRunningProcess(nullptr);
 
 	}
-	else if (r >= 5 && r <= 60)
+	else if (r >= 50 && r <= 60)
 	{
 		P_Scheduler->AddToTRM(RunningProcess);
 		SetRunningProcess(nullptr);
 	}
 }
 
-//bool FCFS::KILLP(int pid)
-//{
-	//int x = 1;
-	//if (RunningProcess->getPID() == pid)
-	//{
-	//	P_Scheduler->AddToTRM(RunningProcess);
-	//	SetRunningProcess(nullptr);
-	//	return true;
-	//}
-	//Process* pp;
-	//while (x <= ReadyList.getLength())
-	//{
-	//	pp = ReadyList.getEntry(x);
-	//	if (pp->getPID() == pid)
-	//	{
-	//		P_Scheduler->AddToTRM(pp);
-	//		ReadyList.remove(x);
-	//		return true;
-	//	}
-	//	x++;
-	//}
-	//return false;
-
-//}
 bool FCFS::KILLP(int RandNum)
 {
 	 

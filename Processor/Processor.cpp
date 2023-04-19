@@ -36,7 +36,7 @@ int Processor::GetTimetoFinish()
 
 void Processor::PrintRunningProcess() const
 {
-	RunningProcess->Print();
+	RunningProcess->PrintID();
 	std::cout << "(P" << ProcessorNumber << "), ";
 }
 

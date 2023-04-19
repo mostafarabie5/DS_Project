@@ -28,7 +28,7 @@ public:
 	void SetNUM_IO(int n);
 	void setPair(int first, int second);
 	void DecreaseRemainingTime();
-	void Print();
+	void PrintID();
 	int getAT();
 	int getCT();
 	int getPID();
@@ -36,6 +36,6 @@ public:
 	~Process();
 	friend bool operator>(Process p1, Process p2);
 	friend bool operator !=(Process p1, Process P2);
-	friend std::ostream& operator <<(std::ostream& out, Process p);
+	friend std::ostream& operator <<(std::ostream& out, Process* p);
 };
 

@@ -45,7 +45,7 @@ void Process::DecreaseRemainingTime()
 	RemainingTime--;
 }
 
-void Process::Print()
+void Process::PrintID()
 {
 	std::cout << PID;
 }
@@ -74,9 +74,9 @@ Process::~Process()
 }
 
 
-std::ostream& operator<<(std::ostream& out, Process p)
+std::ostream& operator<<(std::ostream& out, Process* p)
 {
-	p.Print();
+	out << p->PID;
 	return out;
 }
 

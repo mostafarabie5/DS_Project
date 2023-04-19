@@ -262,27 +262,7 @@ inline void LinkedSortedList<ItemType>::Print() const
 	std::cout << endl;
 }
 
-template<>
-inline void LinkedSortedList<Process*>::Print() const
-{
-	cout << getLength() << " RDY: ";
-	Node<Process*>* curptr = headPtr;
-	if (!headPtr)
-	{
-		cout << endl;
-		return;
-	}
 
-	curptr->getItem()->Print();
-	curptr = curptr->getNext();
-	while (curptr)
-	{
-		cout << ", ";
-		curptr->getItem()->Print();
-		curptr = curptr->getNext();
-	}
-	cout << endl;
-}
 
 
 

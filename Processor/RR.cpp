@@ -99,7 +99,7 @@ void RR::Run()
 		SetRunningProcess(nullptr);
 		AddToReady(RunningProcess);
 	}
-	else if (r >= 5 && r <= 60)
+	else if (r >= 50 && r <= 60)
 	{
 		P_Scheduler->AddToTRM(RunningProcess);
 		SetRunningProcess(nullptr);

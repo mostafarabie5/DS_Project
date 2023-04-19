@@ -12,7 +12,6 @@ public:
 	int getFirst();
 	int getSecond();
 	void operator=(const Pair& p);
-	//friend ostream& operator<<(ostream& out, Pair p);
 	void Print();
 
 };

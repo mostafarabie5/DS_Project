@@ -74,8 +74,6 @@ public:
 	void PrintRUN();
 	string  ReadFileName();
 
-	//bool EndProgram();
-
 };
 
 #include"../Processor/Processor.h"
