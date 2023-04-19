@@ -27,9 +27,12 @@ public:
 	void SetPID(int id);
 	void SetNUM_IO(int n);
 	void setPair(int first, int second);
+	void DecreaseRemainingTime();
 	void Print();
 	int getAT();
 	int getCT();
+	int getPID();
+	int getRemainingTime();
 	~Process();
 	friend bool operator>(Process p1, Process p2);
 	friend bool operator !=(Process p1, Process P2);

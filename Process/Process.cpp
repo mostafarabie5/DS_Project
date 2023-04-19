@@ -22,6 +22,7 @@ void Process::SetAT(int at)
 void Process::SetCT(int ct)
 {
 	CT = ct;
+	RemainingTime = ct;
 }
 void Process::SetPID(int id)
 {
@@ -39,6 +40,10 @@ void Process::setPair(int first, int second)
 	p.setSecond(second);
 	IO.enqueue(p);
 }
+void Process::DecreaseRemainingTime()
+{
+	RemainingTime--;
+}
 
 void Process::Print()
 {
@@ -53,6 +58,14 @@ int Process::getAT()
 int Process::getCT()
 {
 	return CT;
+}
+int Process::getPID()
+{
+	return PID;
+}
+int Process::getRemainingTime()
+{
+	return RemainingTime;
 }
 
 Process::~Process()

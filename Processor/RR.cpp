@@ -3,10 +3,50 @@
 RR::RR(Scheduler*sched_ptr,int num):Processor(sched_ptr)
 {
 	ProcessorNumber = num;
+	tt = 0;
 }
 
 void RR::SchedulerAlgo()
 {
+	if (RunningProcess)
+	{
+		if (RunningProcess->getRemainingTime() == 0)
+		{
+			P_Scheduler->AddToTRM(RunningProcess);
+			if (!ReadyQueue.isEmpty())
+			{
+				ReadyQueue.dequeue(RunningProcess);
+			}
+			else
+			{
+				RunningProcess = nullptr;
+			}
+			tt = 0;
+		}
+		else 
+		{
+			RunningProcess->DecreaseRemainingTime();
+			tt++;
+			if (tt == P_Scheduler->GetTS())
+			{
+				ReadyQueue.enqueue(RunningProcess);
+				ReadyQueue.dequeue(RunningProcess);
+				tt = 0;
+				return;
+				
+			}
+			Run();
+		}
+		
+	}
+	else
+	{
+		if (!ReadyQueue.isEmpty())
+		{
+			AddToRun();
+		}
+	}
+
 }
 
 void RR::AddToReady(Process* P)
@@ -17,7 +57,7 @@ void RR::AddToReady(Process* P)
 void RR::PrintReady()
 {
 
-	std::cout << "Processor " << ProcessorNumber << " [RR]: ";
+	std::cout << "Processor " << ProcessorNumber << " [RR  ]: ";
 	ReadyQueue.Print(NumRDY(), " RDY: ");
 
 }

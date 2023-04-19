@@ -21,7 +21,6 @@ public:
 	bool peek(ItemType& frntEntry)  const;
 	void Print(int num, string s)const;
 	int Getcount()const;
-	//void operator =(Queue<ItemType> q);
 	~Queue();
 };
 
@@ -62,24 +61,6 @@ inline void Queue<Pair>::Print(int num, string s)const
 	cout << endl;
 }
 
-//template<>
-//inline void Queue<Process*>::Print(int num, std::string s)const
-// {
-//	std::cout << num << s;
-//	Node<Process*>* curptr = frontPtr;
-//	if (!curptr)
-//		return;
-//
-//	curptr->getItem();
-//	curptr = curptr->getNext();
-//	while (curptr)
-//	{
-//		std::cout << ", ";
-//		curptr->getItem()->Print();
-//		curptr = curptr->getNext();
-//	}
-//	std::cout << std::endl;
-//}
 
 template<typename ItemType>
 Queue<ItemType>::Queue()
@@ -171,26 +152,6 @@ bool Queue<ItemType>::peek(ItemType& frntEntry) const
 }
 
 
-//template<class ItemType>
-//inline void Queue<ItemType>::Print(int num, std::string s)const
-//{
-//	std::cout << num << s;
-//	Node<ItemType>* curptr = frontPtr;
-//	if (!curptr)
-//		return;
-//
-//	std::cout << curptr->getItem();
-//	curptr = curptr->getNext();
-//	while (curptr)
-//	{
-//		std::cout << ", " << curptr->getItem();
-//		curptr = curptr->getNext();
-//	}
-//	std::cout << std::endl;
-//}
-
-
-
 template<typename ItemType>
 int Queue<ItemType>::Getcount()const
 {
@@ -206,64 +167,5 @@ Queue<ItemType>::~Queue()
 	while (dequeue(temp));
 }
 
-//template<typename ItemType>
-//void Queue<ItemType>::operator=(Queue<ItemType> q)
-//{
-//	counter = q.counter;
-//	backPtr = q.backPtr;
-//	frontPtr = q.frontPtr;
-//}
 
-
-
-
-
-/*template<>
-bool Queue<Pair>::dequeue(Pair& p)
-{
-	if (isEmpty())
-		return false;
-
-	Node<Pair>* nodeToDeletePtr = frontPtr;
-	p = frontPtr->getItem();
-	frontPtr = frontPtr->getNext();
-	// Queue is not empty; remove front
-	if (nodeToDeletePtr == backPtr)	 // Special case: last node in the queue
-		backPtr = nullptr;
-
-	// Free memory reserved for the dequeued node
-	delete nodeToDeletePtr;
-	counter--;
-	return true;
-}
-template<>
-Queue<Pair>::~Queue()
-{
-	Pair p;
-	while (dequeue(p));
-}
-
-
-/*template<>
-void Queue<Pair>::Print(int num, std::string s)
-{
-	std::cout << num << s;
-	Node<Pair>* curptr = frontPtr;
-	if (!curptr)
-		return;
-
-	std::cout << curptr->getItem();
-	curptr = curptr->getNext();
-	while (curptr)
-	{
-		std::cout << ", " << curptr->getItem();
-		curptr = curptr->getNext();
-	}
-	std::cout << std::endl;
-}*/
-//std::ostream& operator<<(std::ostream& out, Pair p)
-//{
-//	out << "(" << p.getFirst() << "," << p.getSecond() << "), ";
-//	return out;
-//}
 

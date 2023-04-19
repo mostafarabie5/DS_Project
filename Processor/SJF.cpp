@@ -7,6 +7,33 @@ SJF::SJF(Scheduler* sched_ptr,int num):Processor(sched_ptr)
 
 void SJF::SchedulerAlgo()
 {
+	if (RunningProcess)
+	{
+		if (RunningProcess->getRemainingTime() == 0)
+		{
+			P_Scheduler->AddToTRM(RunningProcess);
+			if (!ReadyList.isEmpty())
+			{
+				AddToRun();
+			}
+			else
+			{
+				RunningProcess = nullptr;
+			}
+		}
+		else
+		{
+			RunningProcess->DecreaseRemainingTime();
+			Run();
+		}
+	}
+	else
+	{
+		if (!ReadyList.isEmpty())
+		{
+			AddToRun();
+		}
+	}
 }
 
 void SJF::AddToReady(Process* P)
@@ -18,7 +45,7 @@ void SJF::PrintReady()
 
 {
 
-	std::cout << "Processor " << ProcessorNumber << " [SJF]: ";
+	std::cout << "Processor " << ProcessorNumber << " [SJF ]: ";
 	ReadyList.Print();
 
 }
@@ -37,7 +64,9 @@ void SJF::AddToRun()
 {
 	if (!ReadyList.isEmpty())
 	{
-		Process* ptr = ReadyList.removeBeg();
+		Process* ptr;
+		ptr = ReadyList.peek();
+		ReadyList.remove(1);
 		SetRunningProcess(ptr);
 	}
 }

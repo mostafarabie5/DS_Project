@@ -6,7 +6,7 @@ class UI
 
 public:
 	UI();
-	void UpdateInterface(Scheduler* SchedPtr,int count);
+	void UpdateInterface(Scheduler* SchedPtr);
 	int ReadMode();
 	string ReadFileName();
 };

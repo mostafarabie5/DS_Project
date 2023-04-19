@@ -18,8 +18,7 @@ public:
 
 	bool add(const ItemType& newEntry);
 
-	bool remove();
-	ItemType removeBeg();
+	bool remove(int position);
 	ItemType peek() const;
 
 	int getLength()const;
@@ -49,19 +48,12 @@ bool PriorityQueue<ItemType>::add(const ItemType& newEntry)
 } // end add
 
 template<class ItemType>
-bool PriorityQueue<ItemType>::remove()
+bool PriorityQueue<ItemType>::remove(int position)
 {
 	// The highest-priority item is at the end of the sorted list
-	return slistPtr->remove(slistPtr->getLength());
+	return slistPtr->remove(position);
 } // end remove
 
-template<class ItemType>
-inline ItemType PriorityQueue<ItemType>::removeBeg()
-{
-	ItemType item = peek();
-	slistPtr->remove(1);
-	return item;
-}
 
 template<class ItemType>
 ItemType PriorityQueue<ItemType>::peek() const

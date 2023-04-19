@@ -169,13 +169,6 @@ void LinkedList<ItemType>::clear()
 		remove(1);
 } // end clear
 
-template<class ItemType>
-inline ItemType LinkedList<ItemType>::RemovBeg()
-{
-	ItemType item = headPtr->getItem();
-	remove(1);
-	return item;
-}
 
 template<class ItemType>
 ItemType LinkedList<ItemType>::getEntry(int position) const

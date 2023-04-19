@@ -4,20 +4,18 @@
 #include"../Processor/RR.h"
 #include"../Processor/SJF.h"
 #include"../UI/UI.h"
+#include<cstdlib>
 class UI;
 class Scheduler
 {
-	Processor** PTR_FCFS;
-	Processor** PTR_SJF;
-	Processor** PTR_RR;
-
+	Processor** P_Processor;
 
 	ofstream outfile;
 	ifstream Infile;
 
 
 	UI* UIPtr; ///pointer IO
-
+	int PP;
 	int NFCFS; ///number of first come first serve CPU
 	int NSJF;  /// number of shortest job first CPU
 	int NRR;   /// number of round robin CPU
@@ -49,11 +47,11 @@ public:
 	void SetNRR(int n);
 	void SetNP(int n);
 	void SetTS(int t);
-
+	void SetP_Processor();
 	void AddToNEW(Process* P);
 	void AddToBLK(Process* P);
 	void AddToTRM(Process* P);
-
+	void SetPP(int n);
 
 	int ShorestQueue();
 	int LongestQueue();
@@ -65,6 +63,7 @@ public:
 	int GetNFCFS()const;
 	int GetNSJF()const;
 	int GetNRR()const;
+	int GetTS()const;
 	void Simulate();
 
 	int RunningProcessors()const;
