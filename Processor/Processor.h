@@ -15,7 +15,7 @@ protected:
 	int PLoad;
 	int PUtil;
 	int Total_Idle;
-	int TimetoFinish; //sum of the CT in ready queue   will also use in calc shotest queue and longest queue 
+	int TimetoFinish; //sum of the CT in ready queue   will also use in calc shotest queue and longest queue  
 
 	int ProcessorNumber;
 public:
@@ -26,12 +26,13 @@ public:
 	virtual void AddToRun() = 0;
 	bool ProcessorState()const; // check if the processor is busy or idle when busy return true otherwise return false
 
+	int getProcessorNumber(int index);
 	int CalcPLoad();
 	int CalcPutil();
 	virtual void SchedulerAlgo() = 0;
 	int GetTimetoFinish();
 	virtual void PrintReady() = 0;
-	virtual void PrintRunningProcess()const;
+	virtual Process* getRunningProcess()const;
 	virtual int CalcTimeToFinish() = 0;
 	virtual int NumRDY()const = 0;
 	virtual void Run() = 0;

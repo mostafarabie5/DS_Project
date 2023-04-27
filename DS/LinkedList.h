@@ -56,6 +56,11 @@ template<class ItemType>
 LinkedList<ItemType>::LinkedList() : headPtr(nullptr), itemCount(0) {}
 
 template<class ItemType>
+inline LinkedList<ItemType>::LinkedList(const LinkedList<ItemType>& aList)
+{
+}
+
+template<class ItemType>
 LinkedList<ItemType>::~LinkedList()
 {
 	clear();
@@ -155,6 +160,7 @@ bool LinkedList<ItemType>::remove(int position)
 		} // end if
 		// Return node to system
 		curPtr->setNext(nullptr);
+		curPtr->setItem(NULL);
 		delete curPtr;
 		curPtr = nullptr;
 		itemCount--; // Decrease count of entries
@@ -205,7 +211,7 @@ void LinkedList<ItemType>::setEntry(int position, const ItemType& newEntry)
 
 template<class ItemType>
 inline void LinkedList<ItemType>::Print() const
-{
+{	
 	std::cout << getLength() << " RDY: ";
 	Node<ItemType>* curptr = headPtr;
 	if (!headPtr)

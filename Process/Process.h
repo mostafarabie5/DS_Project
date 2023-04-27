@@ -1,6 +1,6 @@
 #pragma once
-#include"../DS/Pair.h"
 #include"../DS/Queue.h"
+#include"../DEFS.h"
 #include"fstream"
 #include<iostream>
 class Process
@@ -12,26 +12,29 @@ class Process
 	int TT;  // time when the p finish excution
 	int TRT; // the total time   TT-AT
 	int WT;  // TRT-CT
-	Queue <Pair> IO;  //(IO_R,IO_D)   / ...Array of pair 
+	IO_requests* IO;  //(IO_R,IO_D)   / ...Array of pair 
 	int NUM_IO;    // number of IO operation 
 	int RemainingTime;  // the time to finish executing and go to terminated list
+	int TransitionTime;		// Last transition time of the process.
 
 	Process* child;  // pointer to its child when forking
 
 
 public:
 	Process();
-	Process(int AT, int PID, int CT, Queue<Pair> IO_Time);
+	Process(int AT, int PID, int CT,IO_requests* io);
 	void SetAT(int at);
 	void SetCT(int ct);
 	void SetPID(int id);
 	void SetNUM_IO(int n);
-	void setPair(int first, int second);
+	void SetIO(IO_requests*);
+	void SetTransition(int t) { TransitionTime = t; }
 	void DecreaseRemainingTime();
 	void PrintID();
 	int getAT();
 	int getCT();
 	int getPID();
+	int getTransition() { return TransitionTime; }
 	int getRemainingTime();
 	~Process();
 	friend bool operator>(Process p1, Process p2);

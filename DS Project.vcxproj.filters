@@ -42,9 +42,6 @@
     <ClInclude Include="DS\Node.h">
       <Filter>DS</Filter>
     </ClInclude>
-    <ClInclude Include="DS\Pair.h">
-      <Filter>DS</Filter>
-    </ClInclude>
     <ClInclude Include="DS\PriorityQueue.h">
       <Filter>DS</Filter>
     </ClInclude>
@@ -81,11 +78,11 @@
     <ClInclude Include="Process\Process.h">
       <Filter>Process</Filter>
     </ClInclude>
+    <ClInclude Include="DEFS.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="DS\Pair.cpp">
-      <Filter>DS</Filter>
-    </ClCompile>
     <ClCompile Include="Scheduler\Scheduler.cpp">
       <Filter>Scheduler</Filter>
     </ClCompile>

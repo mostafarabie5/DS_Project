@@ -16,25 +16,8 @@ void FCFS::SchedulerAlgo()
 {
 
 	if (RunningProcess)
-	{
-		if (RunningProcess->getRemainingTime() == 0)
-		{
-			P_Scheduler->AddToTRM(RunningProcess);
-			if (!ReadyList.isEmpty())
-			{
-				AddToRun();
-				/*Run();*////test
-			}
-			else
-			{
-				RunningProcess = nullptr;
-			}
-		}
-		else
-		{
-			RunningProcess->DecreaseRemainingTime();
-			Run();
-		}
+	{		
+		Run();
 	}
 	else
 	{
@@ -54,15 +37,12 @@ void FCFS::SchedulerAlgo()
 void FCFS::AddToReady(Process* P)
 {
 	ReadyList.InsertEnd(P);
+	P->SetTransition(P_Scheduler->GetTimeStep());
 }
 
 void FCFS::PrintReady()
 {
-
-
-	std::cout << "Processor " << ProcessorNumber << " [FCFS]: ";
 	ReadyList.Print();
-
 }
 
 int FCFS::CalcTimeToFinish()
@@ -76,6 +56,8 @@ void FCFS::AddToRun()
 	{
 		Process* ptr;
 		ptr = ReadyList.getEntry(1);
+		if (ptr->getTransition() == P_Scheduler->GetTimeStep())	return;
+
 		ReadyList.remove(1);
 		SetRunningProcess(ptr);
 	}
@@ -83,8 +65,9 @@ void FCFS::AddToRun()
 
 void FCFS::Run()
 {
-	srand(time(0));
 	int r = rand() % 100 + 1;
+	if (RunningProcess->getTransition() == P_Scheduler->GetTimeStep())
+		return;
 	if (r >= 1 && r <= 15)
 	{
 		P_Scheduler->AddToBLK(RunningProcess);

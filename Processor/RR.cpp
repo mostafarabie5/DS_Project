@@ -3,41 +3,13 @@
 RR::RR(Scheduler*sched_ptr,int num):Processor(sched_ptr)
 {
 	ProcessorNumber = num;
-	tt = 0;
 }
 
 void RR::SchedulerAlgo()
 {
 	if (RunningProcess)
 	{
-		if (RunningProcess->getRemainingTime() == 0)
-		{
-			P_Scheduler->AddToTRM(RunningProcess);
-			if (!ReadyQueue.isEmpty())
-			{
-				ReadyQueue.dequeue(RunningProcess);
-			}
-			else
-			{
-				RunningProcess = nullptr;
-			}
-			tt = 0;
-		}
-		else 
-		{
-			RunningProcess->DecreaseRemainingTime();
-			tt++;
-			if (tt == P_Scheduler->GetTS())
-			{
-				ReadyQueue.enqueue(RunningProcess);
-				ReadyQueue.dequeue(RunningProcess);
-				tt = 0;
-				return;
-				
-			}
-			Run();
-		}
-		
+		Run();
 	}
 	else
 	{
@@ -52,14 +24,12 @@ void RR::SchedulerAlgo()
 void RR::AddToReady(Process* P)
 {
 	ReadyQueue.enqueue(P);
+	P->SetTransition(P_Scheduler->GetTimeStep());
 }
 
 void RR::PrintReady()
 {
-
-	std::cout << "Processor " << ProcessorNumber << " [RR  ]: ";
 	ReadyQueue.Print(NumRDY(), " RDY: ");
-
 }
 
 
@@ -78,6 +48,9 @@ void RR::AddToRun()
 	if (!ReadyQueue.isEmpty())
 	{
 		Process* ptr=nullptr;
+		ReadyQueue.peek(ptr);
+		if (ptr->getTransition() == P_Scheduler->GetTimeStep())	return;
+
 		ReadyQueue.dequeue(ptr);
 		SetRunningProcess(ptr);
 	}
@@ -85,8 +58,9 @@ void RR::AddToRun()
 
 void RR::Run()
 {
-	srand(time(0));
 	int r = rand() % 100 + 1;
+	if (RunningProcess->getTransition() == P_Scheduler->GetTimeStep())
+		return;
 	if (r >= 1 && r <= 15)
 	{
 		P_Scheduler->AddToBLK(RunningProcess);
@@ -96,8 +70,8 @@ void RR::Run()
 
 	else if (r >= 20 && r <= 30)
 	{
-		SetRunningProcess(nullptr);
 		AddToReady(RunningProcess);
+		SetRunningProcess(nullptr);
 	}
 	else if (r >= 50 && r <= 60)
 	{

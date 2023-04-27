@@ -12,6 +12,11 @@ Processor::Processor(Scheduler* P) :P_Scheduler(P)
 	Total_Busy = Total_TRT = Total_Idle = PLoad = PUtil = TimetoFinish = 0;
 }
 
+int Processor::getProcessorNumber(int index)
+{
+	return ProcessorNumber;
+}
+
 int Processor::CalcPLoad()
 {
 	return Total_Busy / Total_TRT;
@@ -34,15 +39,16 @@ int Processor::GetTimetoFinish()
 	return TimetoFinish;
 }
 
-void Processor::PrintRunningProcess() const
+Process* Processor::getRunningProcess() const
 {
-	RunningProcess->PrintID();
-	std::cout << "(P" << ProcessorNumber << "), ";
+	return RunningProcess;
 }
 
 void Processor::SetRunningProcess(Process* p)
 {
 	RunningProcess = p;
+	if (p)
+		p->SetTransition(P_Scheduler->GetTimeStep());
 }
 
 

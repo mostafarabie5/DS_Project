@@ -7,11 +7,7 @@ using namespace std;
 
 int main()
 {
-	/*Scheduler* s = new Scheduler;
-	s->SetNFCFS(2);
-	s->SetNRR(1);
-	s->SetNSJF(1);
-	s->Simulate();*/
+	srand(time(0));
 	Scheduler master;
 	master.Simulate();
 

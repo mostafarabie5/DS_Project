@@ -208,6 +208,7 @@ bool LinkedSortedList<ItemType>::remove(int position)
 		} // end if
 		// Return node to system
 		curPtr->setNext(nullptr);
+		curPtr->setItem(NULL);
 		delete curPtr;
 		curPtr = nullptr;
 		itemCount--; // Decrease count of entries
@@ -232,12 +233,6 @@ ItemType LinkedSortedList<ItemType>::getEntry(int position) const
 		Node<ItemType>* nodePtr = getNodeAt(position);
 		return nodePtr->getItem();
 	}
-	//else
-	//{
-	//	string message = "getEntry() called with an empty list or ";
-	//	message = message + "invalid position.";
-	//	return ;
-	//} // end if
 } // end getEntry
 
 

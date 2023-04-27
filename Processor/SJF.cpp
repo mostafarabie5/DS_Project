@@ -9,23 +9,7 @@ void SJF::SchedulerAlgo()
 {
 	if (RunningProcess)
 	{
-		if (RunningProcess->getRemainingTime() == 0)
-		{
-			P_Scheduler->AddToTRM(RunningProcess);
-			if (!ReadyList.isEmpty())
-			{
-				AddToRun();
-			}
-			else
-			{
-				RunningProcess = nullptr;
-			}
-		}
-		else
-		{
-			RunningProcess->DecreaseRemainingTime();
-			Run();
-		}
+		Run();
 	}
 	else
 	{
@@ -39,15 +23,12 @@ void SJF::SchedulerAlgo()
 void SJF::AddToReady(Process* P)
 {
 	ReadyList.add(P);
+	P->SetTransition(P_Scheduler->GetTimeStep());
 }
 
 void SJF::PrintReady()
-
 {
-
-	std::cout << "Processor " << ProcessorNumber << " [SJF ]: ";
 	ReadyList.Print();
-
 }
 
 int SJF::NumRDY() const
@@ -66,6 +47,8 @@ void SJF::AddToRun()
 	{
 		Process* ptr;
 		ptr = ReadyList.peek();
+		if (ptr->getTransition() == P_Scheduler->GetTimeStep())	return;
+
 		ReadyList.remove(1);
 		SetRunningProcess(ptr);
 	}
@@ -73,8 +56,9 @@ void SJF::AddToRun()
 
 void SJF::Run()
 {
-	srand(time(0));
 	int r = rand() % 100 + 1;
+	if (RunningProcess->getTransition() == P_Scheduler->GetTimeStep())
+		return;
 	if (r >= 1 && r <= 15)
 	{
 		P_Scheduler->AddToBLK(RunningProcess);

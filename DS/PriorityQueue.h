@@ -35,6 +35,16 @@ PriorityQueue<ItemType>::PriorityQueue()
 }
 
 template<class ItemType>
+inline PriorityQueue<ItemType>::PriorityQueue(const PriorityQueue& pq)
+{
+}
+
+template<class ItemType>
+inline PriorityQueue<ItemType>::~PriorityQueue()
+{
+}
+
+template<class ItemType>
 bool PriorityQueue<ItemType>::isEmpty() const
 {
 	return slistPtr->isEmpty();

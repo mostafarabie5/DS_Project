@@ -127,11 +127,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="DEFS.h" />
     <ClInclude Include="DS\LinkedList.h" />
     <ClInclude Include="DS\LinkedSortedList.h" />
     <ClInclude Include="DS\ListInterface.h" />
     <ClInclude Include="DS\Node.h" />
-    <ClInclude Include="DS\Pair.h" />
     <ClInclude Include="DS\PriorityQueue.h" />
     <ClInclude Include="DS\PriorityQueueInterface.h" />
     <ClInclude Include="DS\Queue.h" />
@@ -146,7 +146,6 @@
     <ClInclude Include="UI\UI.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="DS\Pair.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Processor\FCFS.cpp" />
     <ClCompile Include="Processor\Processor.cpp" />

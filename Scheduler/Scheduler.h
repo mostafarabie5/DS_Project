@@ -9,7 +9,8 @@ class UI;
 class Scheduler
 {
 	Processor** P_Processor;
-
+	
+	int timestep;
 	ofstream outfile;
 	ifstream Infile;
 
@@ -26,7 +27,7 @@ class Scheduler
 	int STL;   // every time stl will calculate  ->>> _steal limit   
 	int fork;  // forking probability
 
-	Queue<Pair>SIGKILL;
+	SIG_KILL* SIGKILL;
 
 	Queue<Process*>NEW;
 	Queue<Process*>BLK;
@@ -64,14 +65,15 @@ public:
 	int GetNSJF()const;
 	int GetNRR()const;
 	int GetTS()const;
+	int GetTimeStep()const { return timestep; }
 	void Simulate();
 
 	int RunningProcessors()const;
 
-	void PrintProcessor();
+	void PrintProcessor(int index);
 	void PrintBLK();
 	void PrintTRM();
-	void PrintRUN();
+	int GetRunningID(int index);
 	string  ReadFileName();
 
 };

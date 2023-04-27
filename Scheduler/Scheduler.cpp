@@ -3,7 +3,7 @@
 
 Scheduler::Scheduler()
 {
-
+	timestep = 1;
 }
 
 void Scheduler::Load(string FileName)
@@ -31,25 +31,21 @@ void Scheduler::Load(string FileName)
 		ptr->SetCT(CT);
 		ptr->SetNUM_IO(NUM_IO);
 		ptr->SetPID(PID);
+		IO_requests* IO = nullptr;
+		if (NUM_IO)
+			IO = new IO_requests[NUM_IO];
 		for (int j = 0; j < NUM_IO;j++)
 		{
 			int first, second;
 			char c;
 			Infile >> c >> first >> c >> second >> c;
-			ptr->setPair(first, second);
+			IO[j].IO_R = first;
+			IO[j].IO_D = second;
 			if (j != NUM_IO - 1)
 				Infile >> c;
 		}
+		ptr->SetIO(IO);
 		NEW.enqueue(ptr);
-	}
-	while (!Infile.eof())
-	{
-		int first, second;
-		Infile >> first >> second;
-		Pair p;
-		p.setFirst(first);
-		p.setSecond(second);
-		SIGKILL.enqueue(p);
 	}
 	Infile.close();
 }
@@ -105,16 +101,19 @@ void Scheduler::SetP_Processor()
 void Scheduler::AddToNEW(Process* P)
 {
 	NEW.enqueue(P);
+	P->SetTransition(timestep);
 }
 
 void Scheduler::AddToBLK(Process* P)
 {
 	BLK.enqueue(P);
+	P->SetTransition(timestep);
 }
 
 void Scheduler::AddToTRM(Process* P)
 {
 	TRM.enqueue(P);
+	P->SetTransition(timestep);
 }
 
 void Scheduler::SetPP(int n)
@@ -188,7 +187,6 @@ void Scheduler::Simulate()
 	Load(s);
 	int num = NFCFS + NSJF + NRR;
 	Process* p;
-	int time = 1;
 	if (!NEW.isEmpty())
 	{
 		NEW.dequeue(p);
@@ -204,7 +202,7 @@ void Scheduler::Simulate()
 	{
 		if (p)
 		{
-			while (p->getAT() == time)
+			while (p->getAT() == timestep)
 			{
 				i = i % num;
 
@@ -252,21 +250,16 @@ void Scheduler::Simulate()
 			if (r >= 1 && r <= 10)
 			{
 				BLK.dequeue(temp);
-				if (!P_Processor[i]->ProcessorState())
-				{
-					P_Processor[i]->SetRunningProcess(temp);
-				}
-				else
-				{
-					P_Processor[i]->AddToReady(temp);
-				}
+			
+				P_Processor[i]->AddToReady(temp);
+				
 				i++;
 			}
 		}
 		UIPtr->UpdateInterface(this);
 		char ch;
 		cin >> ch;
-		time++;
+		timestep++;
 	}
 }
 
@@ -282,12 +275,9 @@ int Scheduler::RunningProcessors() const
 	return count;
 }
 
-void Scheduler::PrintProcessor()
+void Scheduler::PrintProcessor(int index)
 {
-	for (int i = 0; i < PP; i++)
-	{
-		P_Processor[i]->PrintReady();
-	}
+		P_Processor[index]->PrintReady();
 	//// loop to print one processor of each type 
 }
 
@@ -301,14 +291,14 @@ void Scheduler::PrintTRM()
 	TRM.Print(TRM.Getcount(), " TRM: ");
 }
 
-void Scheduler::PrintRUN()
+int Scheduler::GetRunningID(int index)
 {
-
-	for (int i = 0;i < PP;i++)
-	{
-		if (P_Processor[i]->ProcessorState())
-			P_Processor[i]->PrintRunningProcess();
-	}
+	Process* p;
+	p = P_Processor[index]->getRunningProcess();
+	if (p)
+		return p->getPID();
+	else
+		return -1;
 }
 
 string Scheduler::ReadFileName()
