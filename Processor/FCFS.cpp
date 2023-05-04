@@ -14,29 +14,33 @@ int FCFS::NumRDY()const
 
 void FCFS::SchedulerAlgo()
 {
-
-	if (RunningProcess)
-	{		
-		Run();
-	}
-	else
+	if (!ReadyList.isEmpty())
 	{
-			if (!ReadyList.isEmpty())
+		if (!RunningProcess)
+		{
+			Process* P;
+			P = ReadyList.getEntry(1);
+			RunningProcess = P;
+			ReadyList.remove(1);
+			Total_Busy -= RunningProcess->getCT();
+		}
+		else
+		{
+			RunningProcess->DecreaseRemainingTime();
+			if (RunningProcess->getRemainingTime() == 0)
 			{
-				AddToRun();
+				P_Scheduler->AddToTRM(RunningProcess);
+				RunningProcess = nullptr;
+				SchedulerAlgo();
 			}
-			else
-			{
-				return;
-			}
-		
-		
+		}
 	}
 }
 
 void FCFS::AddToReady(Process* P)
 {
 	ReadyList.InsertEnd(P);
+	Total_Busy += P->getCT();
 	P->SetTransition(P_Scheduler->GetTimeStep());
 }
 
@@ -87,33 +91,17 @@ void FCFS::Run()
 	}
 }
 
-bool FCFS::KILLP(int RandNum)
+bool FCFS::KILLP(int Process_ID)
 {
-	 
-	int x = 1;        /// to get the number of the node that has this pid
-	int pid = RandNum;
-	if (RunningProcess)
-	{
-		if (RunningProcess->getPID() == pid)
-		{
-			P_Scheduler->AddToTRM(RunningProcess);
-			SetRunningProcess(nullptr);
-			return true;
-		}
-	}
-	Process* pp;
-	while (x <= ReadyList.getLength())
-	{
-		pp = ReadyList.getEntry(x);
-		if (pp->getPID() == pid)
-		{
-			P_Scheduler->AddToTRM(pp);
-			ReadyList.remove(x);
-			return true;
-		}
-		x++;
-	}
-	return false;
-
+	return true;
 }
 
+void FCFS::setSIGKILL(int time, int Id)
+{
+	Pair* p = new Pair;
+	p->First = time;
+	p->Second = Id;
+	SIGKILL.enqueue(p);
+}
+
+Queue<Pair*> FCFS::SIGKILL;

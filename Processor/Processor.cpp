@@ -17,6 +17,11 @@ int Processor::getProcessorNumber(int index)
 	return ProcessorNumber;
 }
 
+int Processor::GetBusyTime()
+{
+	return Total_Busy;
+}
+
 int Processor::CalcPLoad()
 {
 	return Total_Busy / Total_TRT;

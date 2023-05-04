@@ -8,12 +8,11 @@ Process::Process()
 	child = nullptr;
 	TransitionTime = -1;
 }
-Process::Process(int AT, int PID, int CT,IO_requests* io)
+Process::Process(int AT, int PID, int CT)
 {
 	SetAT(AT);
 	SetPID(PID);
 	SetCT(CT);
-	IO = io;
 	child = nullptr;
 }
 void Process::SetAT(int at)
@@ -34,10 +33,14 @@ void Process::SetNUM_IO(int n)
 	NUM_IO = n;
 }
 
-void Process::SetIO(IO_requests* io)
+void Process::setPair(int first, int second)
 {
-	IO = io;
+	Pair* p = new Pair;
+	p->First = first;
+	p->Second = second;
+	IO.enqueue(p);
 }
+
 void Process::DecreaseRemainingTime()
 {
 	RemainingTime--;

@@ -27,6 +27,7 @@ public:
 	bool ProcessorState()const; // check if the processor is busy or idle when busy return true otherwise return false
 
 	int getProcessorNumber(int index);
+	int GetBusyTime();
 	int CalcPLoad();
 	int CalcPutil();
 	virtual void SchedulerAlgo() = 0;

@@ -46,6 +46,8 @@ void UI::UpdateInterface(Scheduler* SchedPtr)
 	///// print RTM
 	// Print BLK
 	//// print RUN 
+	char ch;
+	cin >> ch;
 }
 
 int UI::ReadMode()

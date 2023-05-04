@@ -9,8 +9,8 @@ Scheduler::Scheduler()
 void Scheduler::Load(string FileName)
 {
 	Infile.open(FileName + ".txt", ios::in);
-	int nf,ns,nr;
-	Infile >> nf>>ns>>nr;
+	int nf, ns, nr;
+	Infile >> nf >> ns >> nr;
 	SetNFCFS(nf);
 	SetNSJF(ns);
 	SetNRR(nr);
@@ -20,7 +20,7 @@ void Scheduler::Load(string FileName)
 	SetTS(ts);
 	Infile >> RTF >> MAXW >> STL >> fork;
 	int np;
-	Infile >>np ;
+	Infile >> np;
 	SetNP(np);
 	for (int i = 0; i < NP; i++)
 	{
@@ -31,21 +31,22 @@ void Scheduler::Load(string FileName)
 		ptr->SetCT(CT);
 		ptr->SetNUM_IO(NUM_IO);
 		ptr->SetPID(PID);
-		IO_requests* IO = nullptr;
-		if (NUM_IO)
-			IO = new IO_requests[NUM_IO];
-		for (int j = 0; j < NUM_IO;j++)
+		for (int j = 0; j < NUM_IO; j++)
 		{
 			int first, second;
 			char c;
 			Infile >> c >> first >> c >> second >> c;
-			IO[j].IO_R = first;
-			IO[j].IO_D = second;
+			ptr->setPair(first, second);
 			if (j != NUM_IO - 1)
 				Infile >> c;
 		}
-		ptr->SetIO(IO);
 		NEW.enqueue(ptr);
+	}
+	while (NFCFS >0 &&!Infile.eof())
+	{
+		int first, second;
+		Infile >> first >> second;
+		static_cast<FCFS*>(P_Processor[0])->setSIGKILL(first, second);
 	}
 	Infile.close();
 }
@@ -180,85 +181,40 @@ int Scheduler::GetTS() const
 {
 	return TS;
 }
+int Scheduler::GetTimeStep() const
+{
+	return timestep;
+}
 void Scheduler::Simulate()
 {
-	int i = 0;
 	string s = ReadFileName();
 	Load(s);
-	int num = NFCFS + NSJF + NRR;
-	Process* p;
+	Process* p=nullptr;
 	if (!NEW.isEmpty())
-	{
 		NEW.dequeue(p);
-	}
-	else
+	while (TRM.Getcount() != NP)
 	{
-		p = nullptr;
+		while (p && p->getAT() == timestep)
+		{
+			Processor* LessBusy = P_Processor[0];
+			for (int i = 1; i < NFCFS + NSJF + NRR; i++)
+			{
+				if (P_Processor[i]->GetBusyTime() < LessBusy->GetBusyTime())
+					LessBusy = P_Processor[i];
+			}
+			LessBusy->AddToReady(p);
+			if (!NEW.isEmpty())
+				NEW.dequeue(p);
+			else
+				p = nullptr;
+		}
+
+		for (int i = 0; i < NFCFS + NSJF + NRR; i++)
+		{
+			P_Processor[i]->SchedulerAlgo();
+		}
+		
 		UIPtr->UpdateInterface(this);
-		return;
-
-	}
-	while (NP != TRM.Getcount())
-	{
-		if (p)
-		{
-			while (p->getAT() == timestep)
-			{
-				i = i % num;
-
-				P_Processor[i]->AddToReady(p);
-
-				if (!NEW.isEmpty())
-				{
-					NEW.dequeue(p);
-					i++;
-				}
-				else
-				{
-					p = nullptr;
-					break;
-				}
-
-			}
-		}
-
-
-		bool killx = false;
-		int RandNum = rand() % 30 + 1;  ///randnum
-		for (int j = 0; j < NFCFS; j++)
-		{
-			if (!killx)
-			{
-				killx = ((FCFS*)P_Processor[j])->KILLP(RandNum);
-			}
-
-			P_Processor[j]->SchedulerAlgo();
-
-		}
-		for (int j = NFCFS; j < num; j++)
-		{
-
-
-			P_Processor[j]->SchedulerAlgo();
-
-		}
-		Process* temp;
-		if (!BLK.isEmpty())
-		{
-			i = i % num;
-			int r = rand() % 100 + 1;
-			if (r >= 1 && r <= 10)
-			{
-				BLK.dequeue(temp);
-			
-				P_Processor[i]->AddToReady(temp);
-				
-				i++;
-			}
-		}
-		UIPtr->UpdateInterface(this);
-		char ch;
-		cin >> ch;
 		timestep++;
 	}
 }
