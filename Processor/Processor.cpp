@@ -17,21 +17,34 @@ int Processor::getProcessorNumber(int index)
 	return ProcessorNumber;
 }
 
-int Processor::CalcPLoad()
+float Processor::CalcPLoad()
 {
-	return Total_Busy / Total_TRT;
+	return (float(Total_Busy) / Total_TRT)*100;
 }
 
-int Processor::CalcPutil()
+float Processor::CalcPUtil()
 {
-	return Total_Busy / (Total_TRT + Total_Idle);
+	SetTotal_Idle();
+	return (float(Total_Busy) / (Total_TRT + Total_Idle))*100;
 }
+
+
 
 bool Processor::ProcessorState() const
 {
 	if (RunningProcess)
 		return true;
 	return false;
+}
+void Processor::increase_Total_Busy(int x)
+{
+	Total_Busy += x;
+}
+
+void Processor::AddTo_Total_TRT(int x)
+{
+	Total_TRT += x;
+
 }
 
 int Processor::GetTimetoFinish()
@@ -50,5 +63,11 @@ void Processor::SetRunningProcess(Process* p)
 	if (p)
 		p->SetTransition(P_Scheduler->GetTimeStep());
 }
+
+void Processor::SetTotal_Idle()
+{
+	Total_Idle = P_Scheduler->GetTimeStep() - Total_Busy;
+}
+
 
 

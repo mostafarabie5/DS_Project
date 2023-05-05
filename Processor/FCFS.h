@@ -9,9 +9,11 @@ public:
 	void SchedulerAlgo();
 	void AddToReady(Process* P);
 	void PrintReady();
-	int CalcTimeToFinish();
+	/*int CalcTimeToFinish();*/
 	void AddToRun();
 	void Run();
 	bool KILLP(int RandNum);
+	 Process* Delete_FirstProcess() ;
+
 };
 

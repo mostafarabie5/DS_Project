@@ -36,6 +36,7 @@ void FCFS::SchedulerAlgo()
 
 void FCFS::AddToReady(Process* P)
 {
+	TimetoFinish += P->getCT();
 	ReadyList.InsertEnd(P);
 	P->SetTransition(P_Scheduler->GetTimeStep());
 }
@@ -45,21 +46,22 @@ void FCFS::PrintReady()
 	ReadyList.Print();
 }
 
-int FCFS::CalcTimeToFinish()
-{
-	return 0;
-}
+
 
 void FCFS::AddToRun()
 {
 	if (!ReadyList.isEmpty())
 	{
+
 		Process* ptr;
 		ptr = ReadyList.getEntry(1);
 		if (ptr->getTransition() == P_Scheduler->GetTimeStep())	return;
 
 		ReadyList.remove(1);
 		SetRunningProcess(ptr);
+
+		ptr->setRT(P_Scheduler->GetTimeStep());
+		TimetoFinish -= ptr->getCT();
 	}
 }
 
@@ -115,5 +117,12 @@ bool FCFS::KILLP(int RandNum)
 	}
 	return false;
 
+}
+
+Process* FCFS::Delete_FirstProcess()
+{
+	Process* P = ReadyList.getEntry(1);
+	ReadyList.remove(1);
+	return P;
 }
 

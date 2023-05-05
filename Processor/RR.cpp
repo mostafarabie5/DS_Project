@@ -23,6 +23,7 @@ void RR::SchedulerAlgo()
 
 void RR::AddToReady(Process* P)
 {
+	TimetoFinish += P->getCT();
 	ReadyQueue.enqueue(P);
 	P->SetTransition(P_Scheduler->GetTimeStep());
 }
@@ -32,11 +33,6 @@ void RR::PrintReady()
 	ReadyQueue.Print(NumRDY(), " RDY: ");
 }
 
-
-int RR::CalcTimeToFinish()
-{
-	return 0;
-}
 
 int RR::NumRDY() const
 {
@@ -53,6 +49,7 @@ void RR::AddToRun()
 
 		ReadyQueue.dequeue(ptr);
 		SetRunningProcess(ptr);
+		TimetoFinish -= ptr->getCT();
 	}
 }
 
@@ -79,3 +76,11 @@ void RR::Run()
 		SetRunningProcess(nullptr);
 	}
 }
+
+Process* RR::Delete_FirstProcess()
+{
+	Process* ptr = nullptr;
+	ReadyQueue.dequeue(ptr);
+	return ptr;
+}
+

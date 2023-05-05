@@ -1,6 +1,6 @@
 #include "SJF.h"
 
-SJF::SJF(Scheduler* sched_ptr,int num):Processor(sched_ptr)
+SJF::SJF(Scheduler* sched_ptr, int num) :Processor(sched_ptr)
 {
 	ProcessorNumber = num;
 }
@@ -9,19 +9,49 @@ void SJF::SchedulerAlgo()
 {
 	if (RunningProcess)
 	{
-		Run();
-	}
-	else
-	{
-		if (!ReadyList.isEmpty())
+
+
+		Total_Busy++;
+
+		RunningProcess->DecreaseRemainingTime();
+		if (RunningProcess->getRemainingTime() == 0)
 		{
-			AddToRun();
+			P_Scheduler->AddToTRM(RunningProcess);
+			Total_TRT += RunningProcess->getTRT();
+			RunningProcess->SetTransition(P_Scheduler->GetTimeStep());
+			RunningProcess = nullptr;
+		}
+		else
+		{
+			if (RunningProcess->blk_request(RunningProcess->getCT() - RunningProcess->getRemainingTime())) {
+				P_Scheduler->AddToBLK(RunningProcess);
+				RunningProcess->SetTransition(P_Scheduler->GetTimeStep());
+
+				RunningProcess = nullptr;
+			}
 		}
 	}
+	else {
+
+		if (!ReadyList.isEmpty())
+		{
+			Process* ptr;
+			ptr = ReadyList.peek();
+			if (ptr->getTransition() == P_Scheduler->GetTimeStep())	return;
+
+			ReadyList.remove(1);
+			SetRunningProcess(ptr);
+			TimetoFinish -= ptr->getCT();
+			ptr->setRT(P_Scheduler->GetTimeStep());
+
+		}
+	}
+
 }
 
 void SJF::AddToReady(Process* P)
 {
+	TimetoFinish = TimetoFinish+P->getCT();
 	ReadyList.add(P);
 	P->SetTransition(P_Scheduler->GetTimeStep());
 }
@@ -36,44 +66,15 @@ int SJF::NumRDY() const
 	return ReadyList.getLength();
 }
 
-int SJF::CalcTimeToFinish()
+
+Process* SJF::Delete_FirstProcess()
 {
-	return 0;
+
+	Process* ptr;
+	ptr = ReadyList.peek();
+	ReadyList.remove(1);
+	TimetoFinish -= ptr->getCT();
+	return ptr;
 }
 
-void SJF::AddToRun()
-{
-	if (!ReadyList.isEmpty())
-	{
-		Process* ptr;
-		ptr = ReadyList.peek();
-		if (ptr->getTransition() == P_Scheduler->GetTimeStep())	return;
 
-		ReadyList.remove(1);
-		SetRunningProcess(ptr);
-	}
-}
-
-void SJF::Run()
-{
-	int r = rand() % 100 + 1;
-	if (RunningProcess->getTransition() == P_Scheduler->GetTimeStep())
-		return;
-	if (r >= 1 && r <= 15)
-	{
-		P_Scheduler->AddToBLK(RunningProcess);
-		SetRunningProcess(nullptr);
-
-	}
-	else if (r >= 20 && r <= 30)
-	{
-		AddToReady(RunningProcess);
-		SetRunningProcess(nullptr);
-
-	}
-	else if (r >= 50 && r <= 60)
-	{
-		P_Scheduler->AddToTRM(RunningProcess);
-		SetRunningProcess(nullptr);
-	}
-}
