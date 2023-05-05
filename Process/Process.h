@@ -12,19 +12,20 @@ class Process
 	int TT;  // time when the p finish excution
 	int TRT; // the total time   TT-AT
 	int WT;  // TRT-CT
-	IO_requests* IO;  //(IO_R,IO_D)   / ...Array of pair 
+	Queue<Pair*> IO;   //First is IO_R ---------- Second is IO_D
 	int NUM_IO;    // number of IO operation 
 	int RemainingTime;  // the time to finish executing and go to terminated list
 	int TransitionTime;		// Last transition time of the process.
 	Process* child;  // pointer to its child when forking
 public:
 	Process();
-	Process(int AT, int PID, int CT,IO_requests* io);
+	Process(int AT, int PID, int CT);
 	void SetAT(int at);
 	void SetCT(int ct);
 	void SetPID(int id);
 	void SetNUM_IO(int n);
-	void SetIO(IO_requests*);
+	//void SetIO(IO_requests*);
+	void setPair(int first, int second);
 	void SetTransition(int t) { TransitionTime = t; }
 	void DecreaseRemainingTime();
 	void SetTT(int x);

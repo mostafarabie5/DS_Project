@@ -27,7 +27,6 @@ class Scheduler
 	int STL;   // every time stl will calculate  ->>> _steal limit   
 	int fork;  // forking probability
 
-	SIG_KILL* SIGKILL;
 
 	Queue<Process*>NEW;
 	Queue<Process*>BLK;
@@ -72,7 +71,7 @@ public:
 	int GetNSJF()const;
 	int GetNRR()const;
 	int GetTS()const;
-	int GetTimeStep()const { return timestep; }
+	int GetTimeStep()const;
 	void Simulate();
 
 	int RunningProcessors()const;

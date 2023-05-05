@@ -8,12 +8,11 @@ Process::Process()
 	child = nullptr;
 	TransitionTime = -1;
 }
-Process::Process(int AT, int PID, int CT, IO_requests* io)
+Process::Process(int AT, int PID, int CT)
 {
 	SetAT(AT);
 	SetPID(PID);
 	SetCT(CT);
-	IO = io;
 	child = nullptr;
 }
 void Process::SetAT(int at)
@@ -34,30 +33,17 @@ void Process::SetNUM_IO(int n)
 	NUM_IO = n;
 }
 
-void Process::SetIO(IO_requests* io)
+void Process::setPair(int first, int second)
 {
-	IO = io;
+	Pair* p = new Pair;
+	p->First = first;
+	p->Second = second;
+	IO.enqueue(p);
 }
+
 void Process::DecreaseRemainingTime()
 {
 	RemainingTime--;
-}
-
-void Process::SetTT(int x)
-{
-	TT = x;
-	SetTRT();
-	SetWT();
-}
-
-void Process::SetTRT()
-{
-	TRT = TT - AT;
-}
-
-void Process::SetWT()
-{
-	WT = TRT - CT;
 }
 
 void Process::PrintID()
@@ -78,62 +64,14 @@ int Process::getPID()
 {
 	return PID;
 }
-int Process::getTT()
-{
-	return TT;
-}
-int Process::getTRT()
-{
-	return TRT;
-}
-int Process::get_Total_IO_D()
-{
-	int sum = 0;
-	for (int i = 0;i < NUM_IO;i++)
-	{
-		sum += IO[i].IO_D;
-	}
-	return sum;
-}
-int Process::getWT()
-{
-	return WT;
-}
-int Process::getRT()
-{
-	return RT;
-}
 int Process::getRemainingTime()
 {
 	return RemainingTime;
 }
 
-void  Process::setRT(int x)
-{
-	if (RT == 0)
-		RT = x;
-}
-
-int Process::getio_d()
-{
-	for (int i = 0;i < NUM_IO;i++)
-	{
-		if (IO[i].IO_R == CT-RemainingTime)
-			return IO[i].IO_D;
-	}
-}
-
 Process::~Process()
 {
 
-}
-
-bool Process::blk_request(int timestep)
-{
-	for (int i = 0;i < NUM_IO;i++)
-		if (IO[i].IO_R == timestep)
-			return true;
-	return false;
 }
 
 
