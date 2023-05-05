@@ -38,8 +38,26 @@ void Process::setPair(int first, int second)
 	Pair* p = new Pair;
 	p->First = first;
 	p->Second = second;
+	Total_IO_D += second;
 	IO.enqueue(p);
 }
+void Process::SetTT(int x)
+{
+	TT = x;
+	SetTRT();
+	SetWT();
+}
+
+void Process::SetTRT()
+{
+	TRT = TT - AT;
+}
+
+void Process::SetWT()
+{
+	WT = TRT - CT;
+}
+
 
 void Process::DecreaseRemainingTime()
 {
@@ -64,14 +82,51 @@ int Process::getPID()
 {
 	return PID;
 }
+int Process::getTT()
+{
+	return TT;
+}
+int Process::getTRT()
+{
+	return TRT;
+}
+int Process::get_Total_IO_D()
+{
+	
+	return Total_IO_D;
+}
+int Process::getWT()
+{
+	return WT;
+}
+int Process::getRT()
+{
+	return RT;
+}
 int Process::getRemainingTime()
 {
 	return RemainingTime;
 }
+void  Process::setRT(int x)
+{
+	if (RT == 0)
+		RT = x;
+}
+
 
 Process::~Process()
 {
 
+}
+
+bool Process::blk_request(int timestep)
+{
+	Pair* p = new Pair;
+	IO.peek(p);
+
+	if (p->First == timestep)
+		return true;
+	return false;
 }
 
 

@@ -17,6 +17,7 @@ class Process
 	int RemainingTime;  // the time to finish executing and go to terminated list
 	int TransitionTime;		// Last transition time of the process.
 	Process* child;  // pointer to its child when forking
+	int Total_IO_D;
 public:
 	Process();
 	Process(int AT, int PID, int CT);
@@ -24,7 +25,7 @@ public:
 	void SetCT(int ct);
 	void SetPID(int id);
 	void SetNUM_IO(int n);
-	//void SetIO(IO_requests*);
+
 	void setPair(int first, int second);
 	void SetTransition(int t) { TransitionTime = t; }
 	void DecreaseRemainingTime();
@@ -43,9 +44,6 @@ public:
 	int getTransition() { return TransitionTime; }
 	int getRemainingTime();
 	void setRT(int x);
-	//////////////////////////////
-	int getio_d();
-	/////////////////////////
 	~Process();
 	bool blk_request(int timestep);
 	friend bool operator >(Process p1, Process p2);

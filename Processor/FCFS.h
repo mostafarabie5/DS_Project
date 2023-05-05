@@ -15,5 +15,6 @@ public:
 	void Run();
 	bool KILLP(int Process_ID);
 	static void setSIGKILL(int time,int Id);
+	Process* Delete_FirstProcess();
 };
 

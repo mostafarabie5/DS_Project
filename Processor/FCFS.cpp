@@ -104,4 +104,11 @@ void FCFS::setSIGKILL(int time, int Id)
 	SIGKILL.enqueue(p);
 }
 
+Process* FCFS::Delete_FirstProcess()
+{
+	Process* ptr = ReadyList.getEntry(1);
+	ReadyList.remove(1);
+	return ptr;
+}
+
 Queue<Pair*> FCFS::SIGKILL;

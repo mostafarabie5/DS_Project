@@ -27,7 +27,6 @@ class Scheduler
 	int STL;   // every time stl will calculate  ->>> _steal limit   
 	int fork;  // forking probability
 
-
 	Queue<Process*>NEW;
 	Queue<Process*>BLK;
 	Queue<Process*>TRM;/// must  be  changed  to  priority  queue
@@ -79,8 +78,6 @@ public:
 	void PrintBLK();
 	void PrintTRM();
 	int GetRunningID(int index);
-
-
 	void CalcLStQueue();
 	
 

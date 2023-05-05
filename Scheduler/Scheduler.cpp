@@ -3,7 +3,7 @@
 
 Scheduler::Scheduler()
 {
-	timestep = 1;
+
 }
 
 void Scheduler::Load(string FileName)
@@ -31,23 +31,25 @@ void Scheduler::Load(string FileName)
 		ptr->SetCT(CT);
 		ptr->SetNUM_IO(NUM_IO);
 		ptr->SetPID(PID);
-		IO_requests* IO = nullptr;
-		if (NUM_IO)
-			IO = new IO_requests[NUM_IO];
-		for (int j = 0; j < NUM_IO;j++)
+		for (int j = 0; j < NUM_IO; j++)
 		{
 			int first, second;
 			char c;
 			Infile >> c >> first >> c >> second >> c;
-			IO[j].IO_R = first;
-			IO[j].IO_D = second;
+			ptr->setPair(first, second);
 			if (j != NUM_IO - 1)
 				Infile >> c;
 		}
-		ptr->SetIO(IO);
 		NEW.enqueue(ptr);
 	}
+	while (NFCFS > 0 && !Infile.eof())
+	{
+		int first, second;
+		Infile >> first >> second;
+		static_cast<FCFS*>(P_Processor[0])->setSIGKILL(first, second);
+	}
 	Infile.close();
+
 }
 
 void Scheduler::OP_File()
@@ -210,6 +212,10 @@ int Scheduler::GetTS() const
 {
 	return TS;
 }
+int Scheduler::GetTimeStep() const
+{
+	return timestep;
+}
 void Scheduler::Simulate()
 {
 
@@ -245,7 +251,7 @@ void Scheduler::Simulate()
 			}
 		}
 		//////////////////////////////////////////////////////////////////
-		
+		//from blk to ready
 		/////////////////////////////////////////////////////////////////
 
 		if (mode == 1 || mode == 2)
