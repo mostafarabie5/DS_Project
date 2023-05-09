@@ -1,0 +1,23 @@
+TT       PID       AT       CT       IO_D       WT       RT       TRT
+141       8        7        100        0        34        0        134
+335       9        7        200        0        128        135        328
+342       10        8        200        0        134        0        334
+499       5        5        62        37        432        29        494
+536       3        3        56        37        477        3        533
+541       2        3        56        37        482        0        538
+544       4        4        54        37        486        16        540
+623       6        6        134        37        483        55        617
+656       11        8        300        0        348        356        648
+729       7        6        134        37        589        42        723
+901       1        2        200        37        699        657        899
+Processes : 11
+AVG WT=390.182      AVG_RT=117.545      AVG TRT=526.182
+Migiration%:      RTF=4      MaxW=50      Work Steal%=0
+Forked Processes : 
+killed Proceeses : 
+Processors : 2[1 FCFS ,1 SJF ,0 RR ]
+Procesores load
+P1=17.5395   P2=66.8033   
+Processores Utiliz
+P1=17.3306   P2=53.1811   
+AVG Utilization=35.2558

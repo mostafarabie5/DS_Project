@@ -8,9 +8,10 @@ public:
 	void SchedulerAlgo();
 	void AddToReady(Process* P);
 	void PrintReady();
-	int CalcTimeToFinish();
+	/*int CalcTimeToFinish();*/
 	int NumRDY()const; // return number of items in ready list
 	void AddToRun();
-	void Run();
+	Process* Delete_FirstProcess();
+
 };
 

@@ -14,86 +14,38 @@ int FCFS::NumRDY()const
 
 void FCFS::SchedulerAlgo()
 {
-	if (!ReadyList.isEmpty())
+	
+	if (!RunningProcess)
 	{
-		if (!RunningProcess)
+		if (!ReadyList.isEmpty())
 		{
 			Process* P;
-			P = ReadyList.getEntry(1);
+			P = Delete_FirstProcess();
 			RunningProcess = P;
-			ReadyList.remove(1);
-			Total_Busy -= RunningProcess->getCT();
 		}
-		else
-		{
-			RunningProcess->DecreaseRemainingTime();
-			if (RunningProcess->getRemainingTime() == 0)
+	}
+	else
+	{
+		Total_Busy++;
+		RunningProcess->DecreaseRemainingTime();
+		if(!MoveToTRM())
+			if (RunningProcess->blk_request(RunningProcess->getCT() - RunningProcess->getRemainingTime()))
 			{
-				P_Scheduler->AddToTRM(RunningProcess);
+				P_Scheduler->AddToBLK(RunningProcess);
 				RunningProcess = nullptr;
-				SchedulerAlgo();
 			}
-		}
 	}
 }
 
 void FCFS::AddToReady(Process* P)
 {
 	ReadyList.InsertEnd(P);
-	Total_Busy += P->getCT();
-	P->SetTransition(P_Scheduler->GetTimeStep());
+	TimetoFinish += P->getCT();
 }
 
 void FCFS::PrintReady()
 {
 	ReadyList.Print();
-}
-
-int FCFS::CalcTimeToFinish()
-{
-	return 0;
-}
-
-void FCFS::AddToRun()
-{
-	if (!ReadyList.isEmpty())
-	{
-		Process* ptr;
-		ptr = ReadyList.getEntry(1);
-		if (ptr->getTransition() == P_Scheduler->GetTimeStep())	return;
-
-		ReadyList.remove(1);
-		SetRunningProcess(ptr);
-	}
-}
-
-void FCFS::Run()
-{
-	int r = rand() % 100 + 1;
-	if (RunningProcess->getTransition() == P_Scheduler->GetTimeStep())
-		return;
-	if (r >= 1 && r <= 15)
-	{
-		P_Scheduler->AddToBLK(RunningProcess);
-		SetRunningProcess(nullptr);
-
-	}
-	else if (r >= 20 && r <= 30)
-	{
-		AddToReady(RunningProcess);
-		SetRunningProcess(nullptr);
-
-	}
-	else if (r >= 50 && r <= 60)
-	{
-		P_Scheduler->AddToTRM(RunningProcess);
-		SetRunningProcess(nullptr);
-	}
-}
-
-bool FCFS::KILLP(int Process_ID)
-{
-	return true;
 }
 
 void FCFS::setSIGKILL(int time, int Id)
@@ -103,5 +55,111 @@ void FCFS::setSIGKILL(int time, int Id)
 	p->Second = Id;
 	SIGKILL.enqueue(p);
 }
+
+Process* FCFS::Delete_FirstProcess()
+{
+	Process* ptr = ReadyList.getEntry(1);
+	ReadyList.remove(1);
+	TimetoFinish -= ptr->getCT();
+	return ptr;
+}
+
+bool FCFS::KillProcess()
+{
+	Pair* Signal;
+	bool found=false;
+	Process* p = nullptr;
+	int Position_ReadyList;
+	if (SIGKILL.peek(Signal))
+	{
+
+		if (Signal->First == P_Scheduler->GetTimeStep())
+		{
+			if (RunningProcess&&(RunningProcess->getPID() == Signal->Second))
+			{
+				P_Scheduler->AddToTRM(RunningProcess);
+				KillOrphan(RunningProcess->GetChild());
+				RunningProcess = nullptr;
+				found = true;
+			}
+			else
+			{
+				for (int i = 1; i <= ReadyList.getLength() && !found; i++)
+				{
+					p = ReadyList.getEntry(i);
+					if (p->getPID() == Signal->Second)
+					{
+						found = true;
+						Position_ReadyList = i;
+					}
+				}
+				if (found)
+				{
+					P_Scheduler->AddToTRM(p);
+					ReadyList.remove(Position_ReadyList);
+					KillOrphan(p->GetChild());
+				}
+			}
+			if (found)
+			{
+				SIGKILL.dequeue(Signal);
+				SIGKILL.peek(Signal);
+				found = false;
+			}
+		}
+		
+	}
+	return found;
+}
+
+void FCFS::KillOrphan(Process* p)
+{
+	if (!p)
+		return;
+	P_Scheduler->SearchOrphan(p);
+	KillOrphan(p->GetChild());
+}
+
+bool FCFS::OrphanPosition(Process*& p)
+{
+	bool found = false;
+	int position;
+	Process* temp;
+	if (RunningProcess == p)
+	{
+		P_Scheduler->AddToTRM(RunningProcess);
+		RunningProcess = nullptr;
+		return true;
+	}
+	
+	for (int i = 1; i <= ReadyList.getLength() && !found; i++)
+	{
+		temp = ReadyList.getEntry(i);
+		if (p->getPID() == temp->getPID())
+		{
+			found = true;
+			position = i;
+		}
+	}
+	if (found)
+	{
+		P_Scheduler->AddToTRM(p);
+		ReadyList.remove(position);
+	}
+	
+	
+	return found;
+}
+
+void FCFS::popKillSignal()
+{
+	Pair* p;
+	if (!SIGKILL.isEmpty())
+	{
+		SIGKILL.dequeue(p);
+		delete p;
+	}
+}
+
 
 Queue<Pair*> FCFS::SIGKILL;

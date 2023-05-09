@@ -3,7 +3,7 @@
 
 Scheduler::Scheduler()
 {
-	timestep = 1;
+
 }
 
 void Scheduler::Load(string FileName)
@@ -42,25 +42,65 @@ void Scheduler::Load(string FileName)
 		}
 		NEW.enqueue(ptr);
 	}
-	while (NFCFS >0 &&!Infile.eof())
+	while (NFCFS > 0 && !Infile.eof())
 	{
 		int first, second;
 		Infile >> first >> second;
 		static_cast<FCFS*>(P_Processor[0])->setSIGKILL(first, second);
 	}
 	Infile.close();
+
+}
+
+void Scheduler::OP_File()
+{
+	outfile.open("OutputFile.txt", ios::out);
+	outfile << "TT       PID       AT       CT       IO_D       WT       RT       TRT" << endl;
+	Process* p;
+	for (int i = 0;i < NP;i++)
+	{
+		TRM.dequeue(p);
+		outfile << p->getTT() << "       " << p->getPID() << "        " << p->getAT() << "        " << p->getCT() << "        " << p->get_Total_IO_D() << "        ";
+		outfile << p->getWT() <<  "        " << p->getRT() << "        " << p->getTRT();
+		outfile << endl;
+	}
+
+	outfile << "Processes : " << NP << endl;
+	outfile << "AVG WT=" << AVG_WT << "      " << "AVG_RT=" << AVG_RT << "      " << "AVG TRT=" << AVG_TRT << endl;
+	outfile << "Migiration%:" << "      " << "RTF=" << RTF << "      " << "MaxW=" << MAXW << "      ";
+	outfile << "Work Steal%="  << CalcStealLimit()<< endl;
+	outfile << "Forked Processes : " << endl;
+	outfile << "killed Proceeses : " << endl;
+	outfile << "Processors : " << PP << "[" << NFCFS << " FCFS ," << NSJF << " SJF ," << NRR << " RR ]" << endl;
+	outfile << "Procesores load" << endl;
+	for (int i = 0;i < PP;i++)
+	{
+		outfile << "P" << i + 1 << "=" << P_Processor[i]->CalcPLoad();
+		outfile << "   ";
+	}
+	outfile << endl;
+	outfile << "Processores Utiliz" << endl;
+	float sum = 0;
+	for (int i = 0;i < PP;i++)
+	{
+		sum += P_Processor[i]->CalcPUtil();
+		outfile << "P" << i + 1 << "=" << P_Processor[i]->CalcPUtil();
+		outfile << "   ";
+	}
+	outfile << endl;
+	outfile << "AVG Utilization=" << sum / PP;
 }
 
 void Scheduler::SetNFCFS(int n)
 {
 	NFCFS = n;
-	
+
 }
 
 void Scheduler::SetNSJF(int n)
 {
 	NSJF = n;
-	
+
 }
 
 void Scheduler::SetNRR(int n)
@@ -87,34 +127,38 @@ void Scheduler::SetP_Processor()
 	int i = 0;
 	for (;i < NFCFS;i++)
 	{
-		P_Processor[i] = new FCFS(this, i+1);
+		P_Processor[i] = new FCFS(this, i + 1);
 	}
 	for (;i < NFCFS + NSJF;i++)
 	{
-		P_Processor[i] = new SJF(this, i+1);
+		P_Processor[i] = new SJF(this, i + 1);
 	}
 	for (;i < n;i++)
 	{
-		P_Processor[i] = new RR(this, i+1);
+		P_Processor[i] = new RR(this, i + 1);
 	}
 }
 
 void Scheduler::AddToNEW(Process* P)
 {
 	NEW.enqueue(P);
-	P->SetTransition(timestep);
 }
 
 void Scheduler::AddToBLK(Process* P)
 {
+	if (BLK.isEmpty())
+		P->Set_TimeToReadyBack(timestep);
 	BLK.enqueue(P);
-	P->SetTransition(timestep);
 }
 
 void Scheduler::AddToTRM(Process* P)
 {
+
+	P->SetTT(timestep);
+	AVG_RT = AVG_RT +P->getRT() /float (NP);
+	AVG_TRT = AVG_TRT + P->getTRT() / float(NP);
+	AVG_WT = AVG_WT +P->getWT() / float(NP);
 	TRM.enqueue(P);
-	P->SetTransition(timestep);
 }
 
 void Scheduler::SetPP(int n)
@@ -122,24 +166,22 @@ void Scheduler::SetPP(int n)
 	PP = n;
 }
 
-int Scheduler::ShorestQueue()
-{
-	return 1;
-}
 
-int Scheduler::LongestQueue()
-{
-	return 1;
-}
 
-void Scheduler::CalcStealLimit()
-{
-	int StealLimit = (LongestQueue() - ShorestQueue()) / LongestQueue();
 
-	if (StealLimit > 40)
+float Scheduler::CalcStealLimit()
+{
+	float StealLimit;
+	if (LP->NumRDY() == 1 )
+		return 0;
+
+
+	if (LongQueue > 0)
 	{
-		/////   should pop a Process from the longest and push it in the shorteast and do that until the StealLimit be smaller than 40
+		StealLimit = ((float(LongQueue) - ShortQueue) / LongQueue)*100;
+		return StealLimit;
 	}
+	return 0;
 }
 
 void Scheduler::PassProcessTo(Process* P)
@@ -149,20 +191,8 @@ void Scheduler::PassProcessTo(Process* P)
 
 void Scheduler::CreatNewPro(int T, int ct)  ///for forking 
 {
-	/*Process* P = new Process;
-	P->SetPID();/// unique
-	P->SetAT(T);
-	P->SetCT(ct);*/
-	/// should enqeue ii in the ready list of FCFS
 
 }
-
-void Scheduler::Print()
-{
-	//UIPtr->UpdateInterface(this);
-
-}
-
 int Scheduler::GetNFCFS() const
 {
 	return NFCFS;
@@ -187,36 +217,59 @@ int Scheduler::GetTimeStep() const
 }
 void Scheduler::Simulate()
 {
-	string s = ReadFileName();
+
+	int i = 0;
+	string s = UIPtr->ReadFileName();
 	Load(s);
-	Process* p=nullptr;
-	if (!NEW.isEmpty())
-		NEW.dequeue(p);
+	int mode;
+	mode = UIPtr->ReadMode();
 	while (TRM.Getcount() != NP)
 	{
-		while (p && p->getAT() == timestep)
+		Process* P;
+		if (NEW.peek(P))
 		{
-			Processor* LessBusy = P_Processor[0];
-			for (int i = 1; i < NFCFS + NSJF + NRR; i++)
+			while (NEW.peek(P)&&P->getAT() == timestep)
 			{
-				if (P_Processor[i]->GetBusyTime() < LessBusy->GetBusyTime())
-					LessBusy = P_Processor[i];
+				CalcLStQueue();
+				NEW.dequeue(P);
+				SP->AddToReady(P);
 			}
-			LessBusy->AddToReady(p);
-			if (!NEW.isEmpty())
-				NEW.dequeue(p);
-			else
-				p = nullptr;
 		}
+		BackToReady();
 
-		for (int i = 0; i < NFCFS + NSJF + NRR; i++)
+		for (int i = 0;i < PP;i++)
 		{
-			P_Processor[i]->SchedulerAlgo();
+				P_Processor[i]->SchedulerAlgo();
 		}
-		
-		UIPtr->UpdateInterface(this);
+		if (timestep% STL==0)
+		{
+			CalcLStQueue();
+			while (CalcStealLimit()>40)
+			{
+				Process*P=LP->Delete_FirstProcess();
+				SP->AddToReady(P);
+			}
+		}
+		//////////////////////////////////////////////////////////////////
+		//from blk to ready
+		/////////////////////////////////////////////////////////////////
+		for (int i = 0; i < NFCFS; i++)
+		{
+			bool done=false;
+			done = static_cast<FCFS*>(P_Processor[i])->KillProcess();
+			if (done)
+				break;
+		}
+		if (mode == 1 || mode == 2)
+		{
+			UIPtr->UpdateInterface(this, mode);
+		}
 		timestep++;
+
 	}
+	if(mode ==3)
+		UIPtr->UpdateInterface(this, mode);
+	OP_File();
 }
 
 
@@ -233,8 +286,7 @@ int Scheduler::RunningProcessors() const
 
 void Scheduler::PrintProcessor(int index)
 {
-		P_Processor[index]->PrintReady();
-	//// loop to print one processor of each type 
+	P_Processor[index]->PrintReady();
 }
 
 void Scheduler::PrintBLK()
@@ -257,9 +309,62 @@ int Scheduler::GetRunningID(int index)
 		return -1;
 }
 
-string Scheduler::ReadFileName()
+void Scheduler::CalcLStQueue()
 {
-	string m;
-	cin >> m;
-	return string(m);
+	int min=0;
+	int max=0;
+	Processor* lP = NULL;
+	Processor* sP = NULL;
+	if (PP > 0) {
+		sP = lP = P_Processor[0];
+		min = max = P_Processor[0]->GetTimetoFinish();
+
+	}
+
+	for (int i = 1;i < PP;i++)
+	{
+		if (P_Processor[i]->GetTimetoFinish() < min)
+		{
+			min = P_Processor[i]->GetTimetoFinish();
+			sP = P_Processor[i];
+		}
+		else if (P_Processor[i]->GetTimetoFinish() > max)
+		{
+			max = P_Processor[i]->GetTimetoFinish();
+			lP = P_Processor[i];
+		}
+	}
+	ShortQueue = min;
+	LongQueue = max;
+	LP = lP;
+	SP = sP;
 }
+
+void Scheduler::SearchOrphan(Process* p)
+{
+	bool done = false;
+	for (int i = 0; i < NFCFS&&!done; i++)
+		done = static_cast<FCFS*>(P_Processor[i])->OrphanPosition(p);
+}
+
+void Scheduler::BackToReady()
+{
+	Process* p;
+	if (BLK.peek(p))
+	{
+		if (p->Get_TimeToReadyBack() == timestep)
+		{
+			CalcLStQueue();
+			BLK.dequeue(p);
+			SP->AddToReady(p);
+			p->PopFirstIO();
+			if (BLK.peek(p))
+			{
+				p->Set_TimeToReadyBack(timestep);
+			}
+		}
+		
+	}
+}
+
+

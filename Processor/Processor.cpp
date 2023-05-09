@@ -17,26 +17,34 @@ int Processor::getProcessorNumber(int index)
 	return ProcessorNumber;
 }
 
-int Processor::GetBusyTime()
+float Processor::CalcPLoad()
 {
-	return Total_Busy;
+	return (float(Total_Busy) / Total_TRT)*100;
 }
 
-int Processor::CalcPLoad()
+float Processor::CalcPUtil()
 {
-	return Total_Busy / Total_TRT;
+	SetTotal_Idle();
+	return (float(Total_Busy) / (Total_TRT + Total_Idle))*100;
 }
 
-int Processor::CalcPutil()
-{
-	return Total_Busy / (Total_TRT + Total_Idle);
-}
+
 
 bool Processor::ProcessorState() const
 {
 	if (RunningProcess)
 		return true;
 	return false;
+}
+void Processor::increase_Total_Busy(int x)
+{
+	Total_Busy += x;
+}
+
+void Processor::AddTo_Total_TRT(int x)
+{
+	Total_TRT += x;
+
 }
 
 int Processor::GetTimetoFinish()
@@ -52,8 +60,24 @@ Process* Processor::getRunningProcess() const
 void Processor::SetRunningProcess(Process* p)
 {
 	RunningProcess = p;
-	if (p)
-		p->SetTransition(P_Scheduler->GetTimeStep());
 }
+
+void Processor::SetTotal_Idle()
+{
+	Total_Idle = P_Scheduler->GetTimeStep() - Total_Busy;
+}
+
+bool Processor::MoveToTRM()
+{
+	if (RunningProcess->getRemainingTime() == 0)
+	{
+		P_Scheduler->AddToTRM(RunningProcess);
+		Total_TRT += RunningProcess->getTRT();
+		RunningProcess = nullptr;
+		return true;
+	}
+	return false;
+}
+
 
 

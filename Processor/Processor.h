@@ -10,7 +10,7 @@ class Processor
 protected:
 	Scheduler* P_Scheduler;// pointer of scheduler class
 	Process* RunningProcess;  // pointer to process which is running
-	int Total_Busy;//// sum of CT aready run note in ready 
+	int Total_Busy;//// sum of CT aready run not in ready 
 	int Total_TRT; //// sum of TRT
 	int PLoad;
 	int PUtil;
@@ -18,26 +18,36 @@ protected:
 	int TimetoFinish; //sum of the CT in ready queue   will also use in calc shotest queue and longest queue  
 
 	int ProcessorNumber;
+	
 public:
 	Processor();
 	Processor(Scheduler* P);
 
 	virtual void AddToReady(Process* P) = 0;
-	virtual void AddToRun() = 0;
+	/*virtual void AddToRun() = 0;*/
 	bool ProcessorState()const; // check if the processor is busy or idle when busy return true otherwise return false
-
+	void increase_Total_Busy(int x);//will be called in schedalgo before io request or trm 
+	void AddTo_Total_TRT(int x );// will be called befor only trm
 	int getProcessorNumber(int index);
-	int GetBusyTime();
-	int CalcPLoad();
-	int CalcPutil();
+	 float CalcPLoad() ;
+	 float CalcPUtil();
+	/*int getTotal_Busy();
+	int getTotal_TRT();*/
+	/*int getPLoad();
+	int getPUtil();*/
 	virtual void SchedulerAlgo() = 0;
 	int GetTimetoFinish();
 	virtual void PrintReady() = 0;
 	virtual Process* getRunningProcess()const;
-	virtual int CalcTimeToFinish() = 0;
+	/*virtual int CalcTimeToFinish() = 0;*/
 	virtual int NumRDY()const = 0;
-	virtual void Run() = 0;
+	/*virtual void Run() = 0;*/
 	void SetRunningProcess(Process* p);
-};
+	virtual Process* Delete_FirstProcess() = 0;
+	void SetTotal_Idle();
+	/**move the process which finished exceution to TRM list
+	* @return true when the Running Process finished exceution or false if not*/
+	bool MoveToTRM();
 
+};
 #include"../Scheduler/Scheduler.h"

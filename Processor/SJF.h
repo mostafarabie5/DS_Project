@@ -9,8 +9,7 @@ public:
     void AddToReady(Process* P);
     void PrintReady();
     int NumRDY()const; // return number of items in ready list
-    int CalcTimeToFinish();
-    void AddToRun();
-    void Run();
+    Process* Delete_FirstProcess();
+
 };
 
