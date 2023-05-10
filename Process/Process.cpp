@@ -5,15 +5,14 @@ Process::Process()
 	NUM_IO = 0;
 	AT = TT = TRT = WT = PID = CT = RT = 0;
 	RemainingTime = 0;
+	TimeToReadyBack = -1;
 	child = nullptr;
-	TransitionTime = -1;
 }
-Process::Process(int AT, int PID, int CT, IO_requests* io)
+Process::Process(int AT, int PID, int CT)
 {
 	SetAT(AT);
 	SetPID(PID);
 	SetCT(CT);
-	IO = io;
 	child = nullptr;
 }
 void Process::SetAT(int at)
@@ -34,15 +33,19 @@ void Process::SetNUM_IO(int n)
 	NUM_IO = n;
 }
 
-void Process::SetIO(IO_requests* io)
+void Process::Setdeadline(int n)
 {
-	IO = io;
-}
-void Process::DecreaseRemainingTime()
-{
-	RemainingTime--;
+	deadline = n;
 }
 
+void Process::setPair(int first, int second)
+{
+	Pair* p = new Pair;
+	p->First = first;
+	p->Second = second;
+	Total_IO_D += second;
+	IO.enqueue(p);
+}
 void Process::SetTT(int x)
 {
 	TT = x;
@@ -58,6 +61,13 @@ void Process::SetTRT()
 void Process::SetWT()
 {
 	WT = TRT - CT;
+}
+
+
+
+void Process::DecreaseRemainingTime()
+{
+	RemainingTime--;
 }
 
 void Process::PrintID()
@@ -88,12 +98,8 @@ int Process::getTRT()
 }
 int Process::get_Total_IO_D()
 {
-	int sum = 0;
-	for (int i = 0;i < NUM_IO;i++)
-	{
-		sum += IO[i].IO_D;
-	}
-	return sum;
+
+	return Total_IO_D;
 }
 int Process::getWT()
 {
@@ -107,21 +113,16 @@ int Process::getRemainingTime()
 {
 	return RemainingTime;
 }
-
+int Process::getdeadline()
+{
+	return deadline;
+}
 void  Process::setRT(int x)
 {
 	if (RT == 0)
 		RT = x;
 }
 
-int Process::getio_d()
-{
-	for (int i = 0;i < NUM_IO;i++)
-	{
-		if (IO[i].IO_R == CT-RemainingTime)
-			return IO[i].IO_D;
-	}
-}
 
 Process::~Process()
 {
@@ -130,12 +131,37 @@ Process::~Process()
 
 bool Process::blk_request(int timestep)
 {
-	for (int i = 0;i < NUM_IO;i++)
-		if (IO[i].IO_R == timestep)
-			return true;
+	Pair* p = new Pair;
+	IO.peek(p);
+
+	if (p->First == timestep)
+		return true;
 	return false;
 }
 
+void Process::Set_TimeToReadyBack(int n)
+{
+	Pair* p;
+	if (IO.peek(p))
+		TimeToReadyBack = n + p->Second;
+}
+
+int Process::Get_TimeToReadyBack()
+{
+	return TimeToReadyBack;
+}
+
+Process* Process::GetChild()
+{
+	return child;
+}
+
+void Process::PopFirstIO()
+{
+	Pair* p;
+	IO.dequeue(p);
+	delete p;
+}
 
 std::ostream& operator<<(std::ostream& out, Process* p)
 {
@@ -144,9 +170,16 @@ std::ostream& operator<<(std::ostream& out, Process* p)
 }
 
 
-bool operator >(Process p1, Process p2)
+bool operator >( Process p1, Process p2)
 {
 	if (p1.CT > p2.CT)
+		return true;
+	return false;
+}
+
+bool operator<(Process p1, Process p2)
+{
+	if (p1.deadline < p2.deadline)
 		return true;
 	return false;
 }

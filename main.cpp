@@ -7,9 +7,7 @@ using namespace std;
 
 int main()
 {
-	srand(time(0));
 	Scheduler master;
 	master.Simulate();
-
 	return 0;
 }

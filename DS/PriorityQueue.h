@@ -17,6 +17,7 @@ public:
 	bool isEmpty() const;
 
 	bool add(const ItemType& newEntry);
+	bool add2(const ItemType& newEntry);
 
 	bool remove(int position);
 	ItemType peek() const;
@@ -56,6 +57,13 @@ bool PriorityQueue<ItemType>::add(const ItemType& newEntry)
 	slistPtr->insertSorted(newEntry);
 	return true;
 } // end add
+
+template<class ItemType>
+inline bool PriorityQueue<ItemType>::add2(const ItemType& newEntry)
+{
+	slistPtr->insertSorted2(newEntry);
+	return true;
+}
 
 template<class ItemType>
 bool PriorityQueue<ItemType>::remove(int position)
