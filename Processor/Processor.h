@@ -18,6 +18,8 @@ protected:
 	int TimetoFinish; //sum of the CT in ready queue   will also use in calc shotest queue and longest queue  
 
 	int ProcessorNumber;
+	bool StopMode;
+	int ActiveAtTime;
 	
 public:
 	Processor();
@@ -48,6 +50,12 @@ public:
 	/**move the process which finished exceution to TRM list
 	* @return true when the Running Process finished exceution or false if not*/
 	bool MoveToTRM();
+
+	void set_StopMode(bool b);
+	bool get_StopMode();
+	void set_ActiveAtTime(int n);
+	int get_ActiveAtTime();
+	virtual bool Ready_isEmpty()=0;
 
 };
 #include"../Scheduler/Scheduler.h"

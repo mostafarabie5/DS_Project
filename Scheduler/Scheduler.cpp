@@ -3,7 +3,7 @@
 
 Scheduler::Scheduler()
 {
-
+	StopTimeSteps = 5;
 }
 
 void Scheduler::Load(string FileName)
@@ -226,13 +226,18 @@ void Scheduler::Simulate()
 	while (TRM.Getcount() != NP)
 	{
 		Process* P;
+		StopProcessor();
+		TurnOnProcessor();
 		if (NEW.peek(P))
 		{
 			while (NEW.peek(P)&&P->getAT() == timestep)
 			{
 				CalcLStQueue();
 				NEW.dequeue(P);
-				SP->AddToReady(P);
+				if (SP)
+					SP->AddToReady(P);
+				else
+					StopQueue.enqueue(P);
 			}
 		}
 		BackToReady();
@@ -253,13 +258,8 @@ void Scheduler::Simulate()
 		//////////////////////////////////////////////////////////////////
 		//from blk to ready
 		/////////////////////////////////////////////////////////////////
-		for (int i = 0; i < NFCFS; i++)
-		{
-			bool done=false;
-			done = static_cast<FCFS*>(P_Processor[i])->KillProcess();
-			if (done)
-				break;
-		}
+		KillFCFS_Process();
+		
 		if (mode == 1 || mode == 2)
 		{
 			UIPtr->UpdateInterface(this, mode);
@@ -315,29 +315,37 @@ void Scheduler::CalcLStQueue()
 	int max=0;
 	Processor* lP = NULL;
 	Processor* sP = NULL;
-	if (PP > 0) {
-		sP = lP = P_Processor[0];
-		min = max = P_Processor[0]->GetTimetoFinish();
-
-	}
-
-	for (int i = 1;i < PP;i++)
-	{
-		if (P_Processor[i]->GetTimetoFinish() < min)
+	bool WorkingProcessor = false;
+	int i;
+	
+	for(i=0;i<PP&&!sP;i++)
+		if (!P_Processor[i]->get_StopMode())
 		{
-			min = P_Processor[i]->GetTimetoFinish();
-			sP = P_Processor[i];
+			sP = lP = P_Processor[i];
+			min = max = P_Processor[i]->GetTimetoFinish();
 		}
-		else if (P_Processor[i]->GetTimetoFinish() > max)
+		
+	
+	for (;i < PP;i++)
+	{	
+		if (!P_Processor[i]->get_StopMode())
 		{
-			max = P_Processor[i]->GetTimetoFinish();
-			lP = P_Processor[i];
+			if (P_Processor[i]->GetTimetoFinish() < min)
+			{
+				min = P_Processor[i]->GetTimetoFinish();
+				sP = P_Processor[i];
+			}
+			else if (P_Processor[i]->GetTimetoFinish() > max)
+			{
+				max = P_Processor[i]->GetTimetoFinish();
+				lP = P_Processor[i];
+			}
 		}
 	}
 	ShortQueue = min;
 	LongQueue = max;
 	LP = lP;
-	SP = sP;
+	SP = sP;	
 }
 
 void Scheduler::SearchOrphan(Process* p)
@@ -356,7 +364,10 @@ void Scheduler::BackToReady()
 		{
 			CalcLStQueue();
 			BLK.dequeue(p);
-			SP->AddToReady(p);
+			if (SP)
+				SP->AddToReady(p);
+			else
+				StopQueue.enqueue(p);
 			p->PopFirstIO();
 			if (BLK.peek(p))
 			{
@@ -364,6 +375,75 @@ void Scheduler::BackToReady()
 			}
 		}
 		
+	}
+}
+
+void Scheduler::KillFCFS_Process()
+{
+	for (int i = 0; i < NFCFS; i++)
+	{
+		bool done = false;
+		done = static_cast<FCFS*>(P_Processor[i])->KillProcess();
+		if (done)
+			break;
+	}
+}
+
+void Scheduler::StopProcessor()
+{
+	for (int i = 0; i < PP; i++)
+	{
+		int num = rand() % 100;
+		if (timestep == 5 && i == 0)
+			num = 5;
+		if (num == 5)
+		{
+			Process* temp;
+			P_Processor[i]->set_StopMode(true);
+			P_Processor[i]->set_ActiveAtTime(StopTimeSteps + timestep);
+			CalcLStQueue();
+			temp= P_Processor[i]->getRunningProcess();
+			P_Processor[i]->SetRunningProcess(nullptr);
+			if (temp)
+			{
+				if (SP)
+					SP->AddToReady(temp);
+				else
+					StopQueue.enqueue(temp);
+			}
+			while (!P_Processor[i]->Ready_isEmpty())
+			{
+				CalcLStQueue();
+				temp=P_Processor[i]->Delete_FirstProcess();
+				if(SP)
+					SP->AddToReady(temp);
+				else
+					StopQueue.enqueue(temp);
+			}
+
+		}
+	}
+}
+
+void Scheduler::TurnOnProcessor()
+{
+	bool WorkingProcessor;
+	for (int i = 0; i < PP; i++)
+	{
+		if (P_Processor[i]->get_StopMode() && P_Processor[i]->get_ActiveAtTime() == timestep)
+		{
+			P_Processor[i]->set_StopMode(false);
+			P_Processor[i]->set_ActiveAtTime(0);
+		}
+	}
+	while (!StopQueue.isEmpty())
+	{
+		CalcLStQueue();
+		if (!SP)
+			break;
+		Process* p;
+		StopQueue.dequeue(p);
+		SP->AddToReady(p);
 	}
 }
 

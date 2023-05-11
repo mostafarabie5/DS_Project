@@ -12,6 +12,7 @@ public:
 	int NumRDY()const; // return number of items in ready list
 	void AddToRun();
 	Process* Delete_FirstProcess();
+	bool Ready_isEmpty();
 
 };
 

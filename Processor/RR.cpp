@@ -23,13 +23,13 @@ void RR::SchedulerAlgo()
 
 void RR::AddToReady(Process* P)
 {
-	TimetoFinish += P->getCT();
+	TimetoFinish += P->getRemainingTime();
 	ReadyQueue.enqueue(P);
 }
 
 void RR::PrintReady()
 {
-	ReadyQueue.Print(NumRDY(), " RDY: ");
+	ReadyQueue.Print(NumRDY(), " RDY: ",StopMode);
 }
 
 
@@ -57,6 +57,12 @@ Process* RR::Delete_FirstProcess()
 {
 	Process* ptr = nullptr;
 	ReadyQueue.dequeue(ptr);
+	TimetoFinish -= ptr->getRemainingTime();
 	return ptr;
+}
+
+bool RR::Ready_isEmpty()
+{
+	return ReadyQueue.isEmpty();
 }
 

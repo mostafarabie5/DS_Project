@@ -42,13 +42,13 @@ void SJF::SchedulerAlgo()
 
 void SJF::AddToReady(Process* P)
 {
-	TimetoFinish = TimetoFinish+P->getCT();
+	TimetoFinish = TimetoFinish+P->getRemainingTime();
 	ReadyList.add(P);
 }
 
 void SJF::PrintReady()
 {
-	ReadyList.Print();
+	ReadyList.Print(StopMode);
 }
 
 int SJF::NumRDY() const
@@ -63,8 +63,13 @@ Process* SJF::Delete_FirstProcess()
 	Process* ptr;
 	ptr = ReadyList.peek();
 	ReadyList.remove(1);
-	TimetoFinish -= ptr->getCT();
+	TimetoFinish -= ptr->getRemainingTime();
 	return ptr;
+}
+
+bool SJF::Ready_isEmpty()
+{
+	return ReadyList.isEmpty();
 }
 
 

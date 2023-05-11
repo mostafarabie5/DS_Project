@@ -4,6 +4,8 @@ Processor::Processor()
 {
 	RunningProcess = nullptr;
 	Total_Busy = Total_TRT = Total_Idle = PLoad = PUtil = TimetoFinish = 0;
+	StopMode = false;
+	ActiveAtTime = 0;
 }
 
 Processor::Processor(Scheduler* P) :P_Scheduler(P)
@@ -79,5 +81,24 @@ bool Processor::MoveToTRM()
 	return false;
 }
 
+void Processor::set_StopMode(bool b)
+{
+	StopMode = b;
+}
+
+bool Processor::get_StopMode()
+{
+	return StopMode;
+}
+
+void Processor::set_ActiveAtTime(int n)
+{
+	ActiveAtTime = n;
+}
+
+int Processor::get_ActiveAtTime()
+{
+	return ActiveAtTime;
+}
 
 

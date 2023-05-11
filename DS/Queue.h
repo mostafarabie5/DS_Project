@@ -21,18 +21,20 @@ public:
 	bool enqueue(const ItemType& newEntry);
 	bool dequeue(ItemType& frntEntry);
 	bool peek(ItemType& frntEntry)  const;
-	void Print(int num, string s)const;
+	void Print(int num, string s,bool b=false)const;
 	int Getcount()const;
 	~Queue();
 };
 
 template <class ItemType>
-inline void Queue<ItemType>::Print(int num, string s)const
+inline void Queue<ItemType>::Print(int num, string s,bool b)const
 {
 	cout << num << s;
 	Node<ItemType>* curr = frontPtr;
 	if (!curr)
 	{
+		if (b)
+			cout << " BLOCKED";
 		cout << endl;
 		return;
 	}

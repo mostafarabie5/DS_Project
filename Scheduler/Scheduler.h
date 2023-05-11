@@ -30,6 +30,7 @@ class Scheduler
 	Queue<Process*>NEW;
 	Queue<Process*>BLK;
 	Queue<Process*>TRM;
+	Queue<Process*>StopQueue;
 
 	int ShortQueue;
 	int LongQueue;
@@ -44,7 +45,7 @@ class Scheduler
 	float AVG_WT;
 	float AVG_RT;
 	float AVG_TRT;
-
+	int StopTimeSteps;
 
 
 
@@ -80,7 +81,11 @@ public:
 	int GetRunningID(int index);
 	void CalcLStQueue();
 	void SearchOrphan(Process* p);
+	/*this function return the process which finish IO request to the shortest queue*/
 	void BackToReady();
+	void KillFCFS_Process();
+	void StopProcessor();
+	void TurnOnProcessor();
 	
 
 };

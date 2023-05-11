@@ -162,7 +162,7 @@ std::ostream& operator<<(std::ostream& out, Process* p)
 
 bool operator >(Process p1, Process p2)
 {
-	if (p1.CT > p2.CT)
+	if (p1.RemainingTime > p2.RemainingTime)
 		return true;
 	return false;
 }

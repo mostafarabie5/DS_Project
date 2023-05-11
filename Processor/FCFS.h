@@ -24,5 +24,7 @@ public:
 	bool OrphanPosition(Process*& p);
 	/*remove the Kill Signal after use it with the process*/
 	void popKillSignal();
+
+	bool Ready_isEmpty();
 };
 

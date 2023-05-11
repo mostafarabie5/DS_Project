@@ -10,6 +10,7 @@ public:
     void PrintReady();
     int NumRDY()const; // return number of items in ready list
     Process* Delete_FirstProcess();
+    bool Ready_isEmpty();
 
 };
 
