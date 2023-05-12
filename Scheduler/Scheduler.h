@@ -16,7 +16,7 @@ class Scheduler
 
 
 	UI* UIPtr; ///pointer IO
-	int PP;
+	int PP;	   ////NFCFS+NSJF+NRR
 	int NFCFS; ///number of first come first serve CPU
 	int NSJF;  /// number of shortest job first CPU
 	int NRR;   /// number of round robin CPU
@@ -27,11 +27,10 @@ class Scheduler
 	int STL;   // every time stl will calculate  ->>> _steal limit   
 	int fork;  // forking probability
 
-	SIG_KILL* SIGKILL;
-
 	Queue<Process*>NEW;
 	Queue<Process*>BLK;
-	Queue<Process*>TRM;/// must  be  changed  to  priority  queue
+	Queue<Process*>TRM;
+	Queue<Process*>StopQueue;
 
 	int ShortQueue;
 	int LongQueue;
@@ -39,42 +38,59 @@ class Scheduler
 	Processor* SP;  // shortest queue in the processor
 
 
+
+
+
+
+	float AVG_WT;
+	float AVG_RT;
+	float AVG_TRT;
+	int StopTimeSteps;
+
+
+
 public:
 	Scheduler();
 	void Load(string FileName);
-	//void save();
+	void OP_File();
 	void SetNFCFS(int n);
 	void SetNSJF(int n);
 	void SetNRR(int n);
 	void SetNP(int n);
+	void SetPP(int n);
 	void SetTS(int t);
 	void SetP_Processor();
 	void AddToNEW(Process* P);
 	void AddToBLK(Process* P);
 	void AddToTRM(Process* P);
-	void SetPP(int n);
-
-	int ShorestQueue();
-	int LongestQueue();
-	void CalcStealLimit();
+	float CalcStealLimit();
 
 	void PassProcessTo(Process* P);   ////  will use in stl  to pop from longest  ready qeueu of one processors to shortest one 
 	void CreatNewPro(int T, int ct); ///take  AT= time step  the remaining CT is the new pro CT
-	void Print();
 	int GetNFCFS()const;
 	int GetNSJF()const;
 	int GetNRR()const;
+	int GetNP();
+	int GetPP()const;
 	int GetTS()const;
-	int GetTimeStep()const { return timestep; }
+	int GetTimeStep()const;
+	int GetRTF()const;
+	int GetMAXW()const;
 	void Simulate();
 
 	int RunningProcessors()const;
-
 	void PrintProcessor(int index);
 	void PrintBLK();
 	void PrintTRM();
 	int GetRunningID(int index);
-	string  ReadFileName();
+	void CalcLStQueue();
+	void SearchOrphan(Process* p);
+	/*this function return the process which finish IO request to the shortest queue*/
+	void BackToReady();
+	void KillFCFS_Process();
+	void StopProcessor();
+	void TurnOnProcessor();
+	void MoveToShortest(Process*& p,int num);
 
 };
 

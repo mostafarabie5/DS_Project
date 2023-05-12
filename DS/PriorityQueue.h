@@ -23,7 +23,7 @@ public:
 
 	int getLength()const;
 
-	void Print()const;
+	void Print(bool b)const;
 }; // end PriorityQueue
 
 
@@ -78,7 +78,7 @@ int PriorityQueue<ItemType>::getLength() const
 }
 
 template<class ItemType>
-void PriorityQueue<ItemType>::Print() const
+void PriorityQueue<ItemType>::Print(bool b) const
 {
-	slistPtr->Print();
+	slistPtr->Print(b);
 }

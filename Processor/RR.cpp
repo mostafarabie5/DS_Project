@@ -3,19 +3,54 @@
 RR::RR(Scheduler*sched_ptr,int num):Processor(sched_ptr)
 {
 	ProcessorNumber = num;
+	count = 0;
 }
 
 void RR::SchedulerAlgo()
 {
 	if (RunningProcess)
 	{
-		Run();
+		Total_Busy++;
+		count++;
+		RunningProcess->DecreaseRemainingTime();
+		if (!MoveToTRM())
+		{
+			if (RunningProcess->blk_request(RunningProcess->getCT() - RunningProcess->getRemainingTime()))
+			{
+				P_Scheduler->AddToBLK(RunningProcess);
+				SetRunningProcess(nullptr);
+				count = 0;
+				return;
+			}
+		}
+		else
+		{
+			count = 0;
+			return;
+		}
+		if (RunningProcess->getRemainingTime() < P_Scheduler->GetRTF())
+		{
+			P_Scheduler->MoveToShortest(RunningProcess, P_Scheduler->GetNSJF());
+			count = 0;
+			SetRunningProcess(nullptr);
+		}
+		if (count == P_Scheduler->GetTS())
+		{
+			P_Scheduler->MoveToShortest(RunningProcess, P_Scheduler->GetPP());
+			count = 0;
+			SetRunningProcess(nullptr);
+		}
+		
+
 	}
 	else
 	{
 		if (!ReadyQueue.isEmpty())
 		{
-			AddToRun();
+			Process* ptr;
+			ptr = Delete_FirstProcess();
+			SetRunningProcess(ptr);
+			ptr->setRT(P_Scheduler->GetTimeStep());
 		}
 	}
 
@@ -23,20 +58,15 @@ void RR::SchedulerAlgo()
 
 void RR::AddToReady(Process* P)
 {
+	TimetoFinish += P->getRemainingTime();
 	ReadyQueue.enqueue(P);
-	P->SetTransition(P_Scheduler->GetTimeStep());
 }
 
 void RR::PrintReady()
 {
-	ReadyQueue.Print(NumRDY(), " RDY: ");
+	ReadyQueue.Print(NumRDY(), " RDY: ",StopMode);
 }
 
-
-int RR::CalcTimeToFinish()
-{
-	return 0;
-}
 
 int RR::NumRDY() const
 {
@@ -49,33 +79,25 @@ void RR::AddToRun()
 	{
 		Process* ptr=nullptr;
 		ReadyQueue.peek(ptr);
-		if (ptr->getTransition() == P_Scheduler->GetTimeStep())	return;
+
 
 		ReadyQueue.dequeue(ptr);
 		SetRunningProcess(ptr);
+		TimetoFinish -= ptr->getCT();
 	}
 }
 
-void RR::Run()
+
+Process* RR::Delete_FirstProcess()
 {
-	int r = rand() % 100 + 1;
-	if (RunningProcess->getTransition() == P_Scheduler->GetTimeStep())
-		return;
-	if (r >= 1 && r <= 15)
-	{
-		P_Scheduler->AddToBLK(RunningProcess);
-		SetRunningProcess(nullptr);
-
-	}
-
-	else if (r >= 20 && r <= 30)
-	{
-		AddToReady(RunningProcess);
-		SetRunningProcess(nullptr);
-	}
-	else if (r >= 50 && r <= 60)
-	{
-		P_Scheduler->AddToTRM(RunningProcess);
-		SetRunningProcess(nullptr);
-	}
+	Process* ptr = nullptr;
+	ReadyQueue.dequeue(ptr);
+	TimetoFinish -= ptr->getRemainingTime();
+	return ptr;
 }
+
+bool RR::Ready_isEmpty()
+{
+	return ReadyQueue.isEmpty();
+}
+

@@ -35,7 +35,7 @@ public:
 
 	void setEntry(int position, const ItemType& newEntry);
 
-	void Print()const;
+	void Print(bool b)const;
 
 };
 
@@ -210,12 +210,14 @@ void LinkedList<ItemType>::setEntry(int position, const ItemType& newEntry)
 
 
 template<class ItemType>
-inline void LinkedList<ItemType>::Print() const
+inline void LinkedList<ItemType>::Print(bool b) const
 {	
 	std::cout << getLength() << " RDY: ";
 	Node<ItemType>* curptr = headPtr;
 	if (!headPtr)
 	{
+		if (b)
+			cout << " BLOCKED";
 		cout << endl;
 		return;
 	}
@@ -227,6 +229,7 @@ inline void LinkedList<ItemType>::Print() const
 		std::cout << ", " << curptr->getItem();
 		curptr = curptr->getNext();
 	}
+	
 	std::cout << std::endl;
 }
 
