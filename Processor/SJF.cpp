@@ -27,34 +27,30 @@ void SJF::SchedulerAlgo()
 
 		if (!ReadyList.isEmpty())
 		{
-			Process* ptr;
-			ptr = ReadyList.peek();
-
-			ReadyList.remove(1);
+			Process* ptr = Delete_FirstProcess();
 			SetRunningProcess(ptr);
-			TimetoFinish -= ptr->getCT();
 			ptr->setRT(P_Scheduler->GetTimeStep());
-
 		}
 	}
 
 }
-
+//--------------------------------------------------------------//
 void SJF::AddToReady(Process* P)
 {
 	TimetoFinish = TimetoFinish+P->getRemainingTime();
 	ReadyList.add(P);
 }
-
+//-----------------------------------------------------------//
 void SJF::PrintReady()
 {
 	ReadyList.Print(StopMode);
 }
-
+//--------------------------------------------------------//
 int SJF::NumRDY() const
 {
 	return ReadyList.getLength();
 }
+//-----------------------------------------------------//
 
 
 Process* SJF::Delete_FirstProcess()

@@ -18,6 +18,7 @@ class Process
 	Process* child;  // pointer to its child when forking
 	int Total_IO_D;
 	int TimeToReadyBack;  //the time at which the process return to ready queue 
+	int deadline;
 public:
 	Process();
 	Process(int AT, int PID, int CT);
@@ -25,7 +26,7 @@ public:
 	void SetCT(int ct);
 	void SetPID(int id);
 	void SetNUM_IO(int n);
-
+	void Setdeadline(int n);
 	void setPair(int first, int second);
 	void DecreaseRemainingTime();
 	void SetTT(int x);
@@ -41,6 +42,8 @@ public:
 	int getWT();
 	int getRT();
 	int getRemainingTime();
+	int getdeadline();
+
 	void setRT(int x);
 	~Process();
 	bool blk_request(int timestep);
@@ -54,7 +57,8 @@ public:
 	/*delete the first IO pair after the process return to ready queue*/
 	void PopFirstIO();
 
-	friend bool operator >(Process p1, Process p2);
+	friend bool operator >( Process p1, Process p2);
+	friend bool operator <(Process p1, Process p2);
 	friend bool operator !=(Process p1, Process P2);
 	friend std::ostream& operator <<(std::ostream& out, Process* p);
 };

@@ -137,6 +137,7 @@
     <ClInclude Include="DS\Queue.h" />
     <ClInclude Include="DS\QueueADT.h" />
     <ClInclude Include="DS\SortedListInterface.h" />
+    <ClInclude Include="Processor\EDF.h" />
     <ClInclude Include="Processor\FCFS.h" />
     <ClInclude Include="Processor\Processor.h" />
     <ClInclude Include="Processor\RR.h" />
@@ -147,6 +148,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Processor\EDF.cpp" />
     <ClCompile Include="Processor\FCFS.cpp" />
     <ClCompile Include="Processor\Processor.cpp" />
     <ClCompile Include="Processor\RR.cpp" />

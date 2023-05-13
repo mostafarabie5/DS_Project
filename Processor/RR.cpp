@@ -1,6 +1,6 @@
 #include "RR.h"
 
-RR::RR(Scheduler*sched_ptr,int num):Processor(sched_ptr)
+RR::RR(Scheduler* sched_ptr, int num) :Processor(sched_ptr)
 {
 	ProcessorNumber = num;
 }
@@ -42,15 +42,16 @@ void RR::AddToRun()
 {
 	if (!ReadyQueue.isEmpty())
 	{
-		Process* ptr=nullptr;
+		Process* ptr = nullptr;
 		ReadyQueue.peek(ptr);
 
 
 		ReadyQueue.dequeue(ptr);
 		SetRunningProcess(ptr);
-		TimetoFinish -= ptr->getCT();
+		TimetoFinish -= ptr->getRemainingTime();
 	}
 }
+//-----------------------------------------------------//
 
 
 Process* RR::Delete_FirstProcess()

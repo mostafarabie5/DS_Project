@@ -9,11 +9,12 @@ Scheduler::Scheduler()
 void Scheduler::Load(string FileName)
 {
 	Infile.open(FileName + ".txt", ios::in);
-	int nf, ns, nr;
-	Infile >> nf >> ns >> nr;
+	int nf, ns, nr,nd;
+	Infile >> nf >> ns >> nr>>nd;
 	SetNFCFS(nf);
 	SetNSJF(ns);
 	SetNRR(nr);
+	setNEDF(nd);
 	SetP_Processor();
 	int ts;
 	Infile >> ts;
@@ -24,13 +25,14 @@ void Scheduler::Load(string FileName)
 	SetNP(np);
 	for (int i = 0; i < NP; i++)
 	{
-		int AT, PID, CT, NUM_IO;
-		Infile >> AT >> PID >> CT >> NUM_IO;
+		int AT, PID, CT, NUM_IO,deadline;
+		Infile >> AT >> PID >> CT >> NUM_IO>>deadline;
 		Process* ptr = new Process;
 		ptr->SetAT(AT);
 		ptr->SetCT(CT);
 		ptr->SetNUM_IO(NUM_IO);
 		ptr->SetPID(PID);
+		ptr->Setdeadline(deadline);
 		for (int j = 0; j < NUM_IO; j++)
 		{
 			int first, second;
@@ -55,23 +57,26 @@ void Scheduler::Load(string FileName)
 void Scheduler::OP_File()
 {
 	outfile.open("OutputFile.txt", ios::out);
-	outfile << "TT       PID       AT       CT       IO_D       WT       RT       TRT" << endl;
+	outfile << "TT       PID       AT       CT       IO_D       WT       RT       TRT      Deadline" << endl;
 	Process* p;
+	float num_p = 0;
 	for (int i = 0;i < NP;i++)
 	{
 		TRM.dequeue(p);
 		outfile << p->getTT() << "       " << p->getPID() << "        " << p->getAT() << "        " << p->getCT() << "        " << p->get_Total_IO_D() << "        ";
-		outfile << p->getWT() <<  "        " << p->getRT() << "        " << p->getTRT();
+		outfile << p->getWT() << "        " << p->getRT() << "        " << p->getTRT()<<"        " << p->getdeadline();
 		outfile << endl;
+		if (p->getTT() < p->getdeadline())
+			num_p++;
 	}
 
 	outfile << "Processes : " << NP << endl;
 	outfile << "AVG WT=" << AVG_WT << "      " << "AVG_RT=" << AVG_RT << "      " << "AVG TRT=" << AVG_TRT << endl;
 	outfile << "Migiration%:" << "      " << "RTF=" << RTF << "      " << "MaxW=" << MAXW << "      ";
-	outfile << "Work Steal%="  << CalcStealLimit()<< endl;
+	outfile << "Work Steal%=" << CalcStealLimit() << endl;
 	outfile << "Forked Processes : " << endl;
 	outfile << "killed Proceeses : " << endl;
-	outfile << "Processors : " << PP << "[" << NFCFS << " FCFS ," << NSJF << " SJF ," << NRR << " RR ]" << endl;
+	outfile << "Processors : " << PP << "[" << NFCFS << " FCFS ," << NSJF << " SJF ," << NRR << " RR , "<< NEDF<<" DEF ]" << endl;
 	outfile << "Procesores load" << endl;
 	for (int i = 0;i < PP;i++)
 	{
@@ -89,6 +94,9 @@ void Scheduler::OP_File()
 	}
 	outfile << endl;
 	outfile << "AVG Utilization=" << sum / PP;
+	outfile << endl;
+	outfile << "Percentage of Process completed before expected deadline=";
+	outfile << (num_p / NP) * 100;
 }
 
 void Scheduler::SetNFCFS(int n)
@@ -121,7 +129,7 @@ void Scheduler::SetTS(int t)
 
 void Scheduler::SetP_Processor()
 {
-	int n = NFCFS + NSJF + NRR;
+	int n = NFCFS + NSJF + NRR+NEDF;
 	SetPP(n);
 	P_Processor = new Processor * [n];
 	int i = 0;
@@ -133,9 +141,13 @@ void Scheduler::SetP_Processor()
 	{
 		P_Processor[i] = new SJF(this, i + 1);
 	}
-	for (;i < n;i++)
+	for (;i < NFCFS+NSJF+NRR;i++)
 	{
 		P_Processor[i] = new RR(this, i + 1);
+	}
+	for (;i <n;i++)
+	{
+		P_Processor[i] = new EDF(this, i + 1);
 	}
 }
 
@@ -155,9 +167,9 @@ void Scheduler::AddToTRM(Process* P)
 {
 
 	P->SetTT(timestep);
-	AVG_RT = AVG_RT +P->getRT() /float (NP);
+	AVG_RT = AVG_RT + P->getRT() / float(NP);
 	AVG_TRT = AVG_TRT + P->getTRT() / float(NP);
-	AVG_WT = AVG_WT +P->getWT() / float(NP);
+	AVG_WT = AVG_WT + P->getWT() / float(NP);
 	TRM.enqueue(P);
 }
 
@@ -166,33 +178,25 @@ void Scheduler::SetPP(int n)
 	PP = n;
 }
 
+void Scheduler::setNEDF(int n)
+{
+	NEDF = n;
+}
 
 
 
 float Scheduler::CalcStealLimit()
 {
 	float StealLimit;
-	if (LP->NumRDY() == 1 )
-		return 0;
-
-
-	if (LongQueue > 0)
-	{
-		StealLimit = ((float(LongQueue) - ShortQueue) / LongQueue)*100;
-		return StealLimit;
-	}
+	if(LP)
+		if (LP->NumRDY() > 0)
+		{
+			StealLimit = ((float(LongQueue) - ShortQueue) / LongQueue) * 100;
+			return StealLimit;
+		}
 	return 0;
 }
 
-void Scheduler::PassProcessTo(Process* P)
-{
-	//ADD process to the shortest queue
-}
-
-void Scheduler::CreatNewPro(int T, int ct)  ///for forking 
-{
-
-}
 int Scheduler::GetNFCFS() const
 {
 	return NFCFS;
@@ -230,7 +234,7 @@ void Scheduler::Simulate()
 		TurnOnProcessor();
 		if (NEW.peek(P))
 		{
-			while (NEW.peek(P)&&P->getAT() == timestep)
+			while (NEW.peek(P) && P->getAT() == timestep)
 			{
 				CalcLStQueue();
 				NEW.dequeue(P);
@@ -267,7 +271,7 @@ void Scheduler::Simulate()
 		timestep++;
 
 	}
-	if(mode ==3)
+	if (mode == 3)
 		UIPtr->UpdateInterface(this, mode);
 	OP_File();
 }
@@ -394,9 +398,7 @@ void Scheduler::StopProcessor()
 	for (int i = 0; i < PP; i++)
 	{
 		int num = rand() % 100;
-		if (timestep == 5 && i == 0)
-			num = 5;
-		if (num == 5)
+		if (num == 5 && !P_Processor[i]->get_StopMode())
 		{
 			Process* temp;
 			P_Processor[i]->set_StopMode(true);
@@ -445,6 +447,16 @@ void Scheduler::TurnOnProcessor()
 		StopQueue.dequeue(p);
 		SP->AddToReady(p);
 	}
+}
+
+int Scheduler::GetNEDF()
+{
+	return	NEDF;
+}
+
+int Scheduler::GetPP()
+{
+	return PP;
 }
 
 

@@ -1,12 +1,12 @@
 #include "FCFS.h"
 #include <cstdlib>
 #include<ctime>
-FCFS::FCFS(Scheduler * sched_ptr,int num):Processor(sched_ptr)
+FCFS::FCFS(Scheduler* sched_ptr, int num) :Processor(sched_ptr)
 {
 	ProcessorNumber = num;
 }
 
-
+//-----------------------------------------------------//
 int FCFS::NumRDY()const
 {
 	return ReadyList.getLength();
@@ -14,7 +14,7 @@ int FCFS::NumRDY()const
 
 void FCFS::SchedulerAlgo()
 {
-	
+
 	if (!RunningProcess)
 	{
 		if (!ReadyList.isEmpty())
@@ -28,7 +28,7 @@ void FCFS::SchedulerAlgo()
 	{
 		Total_Busy++;
 		RunningProcess->DecreaseRemainingTime();
-		if(!MoveToTRM())
+		if (!MoveToTRM())
 			if (RunningProcess->blk_request(RunningProcess->getCT() - RunningProcess->getRemainingTime()))
 			{
 				P_Scheduler->AddToBLK(RunningProcess);
@@ -36,13 +36,13 @@ void FCFS::SchedulerAlgo()
 			}
 	}
 }
-
+//-----------------------------------------------------//
 void FCFS::AddToReady(Process* P)
 {
 	ReadyList.InsertEnd(P);
 	TimetoFinish += P->getRemainingTime();
 }
-
+//-----------------------------------------------------//
 void FCFS::PrintReady()
 {
 	ReadyList.Print(StopMode);
@@ -105,7 +105,7 @@ bool FCFS::KillProcess()
 					{
 						P_Scheduler->AddToTRM(p);
 						ReadyList.remove(Position_ReadyList);
-						TimetoFinish -= p->getCT();
+						TimetoFinish -= p->getRemainingTime();
 						KillOrphan(p->GetChild());
 					}
 				}
@@ -157,7 +157,7 @@ bool FCFS::OrphanPosition(Process*& p)
 	{
 		P_Scheduler->AddToTRM(p);
 		ReadyList.remove(position);
-		TimetoFinish -= p->getCT();
+		TimetoFinish -= p->getRemainingTime();
 	}
 	
 	

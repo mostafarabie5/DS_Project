@@ -8,14 +8,14 @@ UI::UI()
 
 }
 
-void UI::UpdateInterface(Scheduler* SchedPtr,int mode)
+void UI::UpdateInterface(Scheduler* SchedPtr, int mode)
 {
 
 	if (mode == 1 || mode == 2)
 	{
 		cout << "Current Timestep " << SchedPtr->GetTimeStep() << endl;
 		cout << "------------------------------- RDY Processes --------------------------\n";
-		int Num_Processors = SchedPtr->GetNFCFS() + SchedPtr->GetNRR() + SchedPtr->GetNSJF();
+		int Num_Processors = SchedPtr->GetPP();
 		for (int i = 0; i < Num_Processors; i++)
 		{
 			cout << "Processor " << i + 1;
@@ -23,8 +23,10 @@ void UI::UpdateInterface(Scheduler* SchedPtr,int mode)
 				cout << " [FCFS]: ";
 			else if (i < SchedPtr->GetNFCFS() + SchedPtr->GetNSJF())
 				cout << " [SJF ]: ";
-			else
+			else if (i < SchedPtr->GetNRR() + SchedPtr->GetNSJF())
 				cout << " [RR  ]: ";
+			else 
+				cout << " [EDF ]: ";
 			SchedPtr->PrintProcessor(i);
 		}
 		cout << endl;
@@ -56,13 +58,13 @@ void UI::UpdateInterface(Scheduler* SchedPtr,int mode)
 		}
 		else
 		{
-			Sleep(1); 
+			Sleep(1);
 		}
 	}
 	else
 	{
 		cout << "Silent Mode .....     Simulation Start ......" << endl;
-		cout << "Simulation ends..,Output File Created"<<endl;
+		cout << "Simulation ends..,Output File Created" << endl;
 	}
 }
 

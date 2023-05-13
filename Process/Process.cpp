@@ -33,6 +33,11 @@ void Process::SetNUM_IO(int n)
 	NUM_IO = n;
 }
 
+void Process::Setdeadline(int n)
+{
+	deadline = n;
+}
+
 void Process::setPair(int first, int second)
 {
 	Pair* p = new Pair;
@@ -57,6 +62,7 @@ void Process::SetWT()
 {
 	WT = TRT - CT;
 }
+
 
 
 void Process::DecreaseRemainingTime()
@@ -92,7 +98,7 @@ int Process::getTRT()
 }
 int Process::get_Total_IO_D()
 {
-	
+
 	return Total_IO_D;
 }
 int Process::getWT()
@@ -107,6 +113,10 @@ int Process::getRemainingTime()
 {
 	return RemainingTime;
 }
+int Process::getdeadline()
+{
+	return deadline;
+}
 void  Process::setRT(int x)
 {
 	if (RT == 0)
@@ -114,12 +124,13 @@ void  Process::setRT(int x)
 }
 
 
+
 Process::~Process()
 {
-
 }
 
-bool Process::blk_request(int timestep)  
+
+bool Process::blk_request(int timestep)
 {
 	Pair* p = new Pair;
 	IO.peek(p);
@@ -132,8 +143,8 @@ bool Process::blk_request(int timestep)
 void Process::Set_TimeToReadyBack(int n)
 {
 	Pair* p;
-	if(IO.peek(p))
-		TimeToReadyBack = n+p->Second;
+	if (IO.peek(p))
+		TimeToReadyBack = n + p->Second;
 }
 
 int Process::Get_TimeToReadyBack()
@@ -160,9 +171,16 @@ std::ostream& operator<<(std::ostream& out, Process* p)
 }
 
 
-bool operator >(Process p1, Process p2)
+bool operator >( Process p1, Process p2)
 {
 	if (p1.RemainingTime > p2.RemainingTime)
+		return true;
+	return false;
+}
+
+bool operator<(Process p1, Process p2)
+{
+	if (p1.deadline < p2.deadline)
 		return true;
 	return false;
 }

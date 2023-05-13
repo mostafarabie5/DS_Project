@@ -53,12 +53,12 @@ int Processor::GetTimetoFinish()
 {
 	return TimetoFinish;
 }
-
+//-----------------------------------------------------//
 Process* Processor::getRunningProcess() const
 {
 	return RunningProcess;
 }
-
+//-----------------------------------------------------//
 void Processor::SetRunningProcess(Process* p)
 {
 	RunningProcess = p;
@@ -100,5 +100,6 @@ int Processor::get_ActiveAtTime()
 {
 	return ActiveAtTime;
 }
+
 
 

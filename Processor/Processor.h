@@ -29,10 +29,10 @@ public:
 	/*virtual void AddToRun() = 0;*/
 	bool ProcessorState()const; // check if the processor is busy or idle when busy return true otherwise return false
 	void increase_Total_Busy(int x);//will be called in schedalgo before io request or trm 
-	void AddTo_Total_TRT(int x );// will be called befor only trm
+	void AddTo_Total_TRT(int x);// will be called befor only trm
 	int getProcessorNumber(int index);
-	 float CalcPLoad() ;
-	 float CalcPUtil();
+	float CalcPLoad();
+	float CalcPUtil();
 	/*int getTotal_Busy();
 	int getTotal_TRT();*/
 	/*int getPLoad();
