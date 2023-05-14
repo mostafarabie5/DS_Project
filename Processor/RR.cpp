@@ -3,21 +3,66 @@
 RR::RR(Scheduler* sched_ptr, int num) :Processor(sched_ptr)
 {
 	ProcessorNumber = num;
+	count = 0;
 }
 
 void RR::SchedulerAlgo()
 {
-	/*if (RunningProcess)
+	if (RunningProcess)
 	{
-		Run();
+		Process* Running = RunningProcess;
+		Total_Busy++;
+		count++;
+		RunningProcess->DecreaseRemainingTime();
+		if (!MoveToTRM())
+		{
+			if (RunningProcess->blk_request(RunningProcess->getCT() - RunningProcess->getRemainingTime()))
+			{
+				P_Scheduler->AddToBLK(RunningProcess);
+				SetRunningProcess(nullptr);
+				count = 0;
+				return;
+			}
+		}
+		else
+		{
+			KillOrphan(Running->getLChild());
+			KillOrphan(Running->getRChild());
+			count = 0;
+			return;
+		}
+		if (count == P_Scheduler->GetTS())
+		{
+			P_Scheduler->MoveToShortest(RunningProcess, "ALL");
+			count = 0;
+			RunningProcess=nullptr;
+		}
+		
+
 	}
 	else
 	{
 		if (!ReadyQueue.isEmpty())
 		{
-			AddToRun();
+			Process* ptr;
+			ptr = Delete_FirstProcess();
+			if (ptr->getRemainingTime() < P_Scheduler->GetRTF() && P_Scheduler->GetNSJF())
+			{
+				if (!P_Scheduler->MoveToShortest(ptr, "SJF"))
+				{
+					RunningProcess = ptr;
+					ptr->setRT(P_Scheduler->GetTimeStep());
+				}
+				count = 0;
+			}
+			else
+			{
+				RunningProcess = ptr;
+				ptr->setRT(P_Scheduler->GetTimeStep());
+			}
 		}
-	}*/
+		
+	}
 
 }
 

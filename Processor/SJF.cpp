@@ -9,7 +9,7 @@ void SJF::SchedulerAlgo()
 {
 	if (RunningProcess)
 	{
-
+		Process* Running = RunningProcess;
 
 		Total_Busy++;
 
@@ -21,6 +21,11 @@ void SJF::SchedulerAlgo()
 				P_Scheduler->AddToBLK(RunningProcess);
 				RunningProcess = nullptr;
 			}
+		}
+		else
+		{
+			KillOrphan(Running->getLChild());
+			KillOrphan(Running->getRChild());
 		}
 	}
 	else {

@@ -28,22 +28,14 @@ public:
 	virtual void AddToReady(Process* P) = 0;
 	/*virtual void AddToRun() = 0;*/
 	bool ProcessorState()const; // check if the processor is busy or idle when busy return true otherwise return false
-	void increase_Total_Busy(int x);//will be called in schedalgo before io request or trm 
-	void AddTo_Total_TRT(int x);// will be called befor only trm
-	int getProcessorNumber(int index);
 	float CalcPLoad();
 	float CalcPUtil();
-	/*int getTotal_Busy();
-	int getTotal_TRT();*/
-	/*int getPLoad();
-	int getPUtil();*/
+	
 	virtual void SchedulerAlgo() = 0;
 	int GetTimetoFinish();
 	virtual void PrintReady() = 0;
 	virtual Process* getRunningProcess()const;
-	/*virtual int CalcTimeToFinish() = 0;*/
 	virtual int NumRDY()const = 0;
-	/*virtual void Run() = 0;*/
 	void SetRunningProcess(Process* p);
 	virtual Process* Delete_FirstProcess() = 0;
 	void SetTotal_Idle();
@@ -56,6 +48,9 @@ public:
 	void set_ActiveAtTime(int n);
 	int get_ActiveAtTime();
 	virtual bool Ready_isEmpty()=0;
+	/*Kill all the children of the Parent process which is killed
+	@param pointer the child process*/
+	void KillOrphan(Process* p);
 
 };
 #include"../Scheduler/Scheduler.h"

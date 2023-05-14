@@ -31,6 +31,7 @@ class Scheduler
 	Queue<Process*>BLK;
 	Queue<Process*>TRM;
 	Queue<Process*>StopQueue;
+	Queue<Process*>StoppingForkedProcess;
 
 	int ShortQueue;
 	int LongQueue;
@@ -46,27 +47,28 @@ class Scheduler
 
 
 
+
 public:
 	Scheduler();
 	void Load(string FileName);
 	void OP_File();
-	void SetNFCFS(int n);
-	void SetNSJF(int n);
-	void SetNRR(int n);
 	void SetNP(int n);
-	void SetTS(int t);
 	void SetP_Processor();
 	void AddToNEW(Process* P);
 	void AddToBLK(Process* P);
 	void AddToTRM(Process* P);
-	void SetPP(int n);
-	void setNEDF(int n);
+	void AddToStoppingForked(Process* p);
 	float CalcStealLimit();
 	int GetNFCFS()const;
 	int GetNSJF()const;
 	int GetNRR()const;
+	int GetNP();
+	int GetPP()const;
 	int GetTS()const;
 	int GetTimeStep()const;
+	int GetRTF()const;
+	int GetMAXW()const;
+	int getForkProbabilty();
 	void Simulate();
 	int RunningProcessors()const;
 	void PrintProcessor(int index);
@@ -80,9 +82,8 @@ public:
 	void KillFCFS_Process();
 	void StopProcessor();
 	void TurnOnProcessor();
-
-	int GetNEDF();
-	int GetPP();
+	bool MoveToShortest(Process*& p, string type);
+	void Forking();
 };
 
 #include"../Processor/Processor.h"

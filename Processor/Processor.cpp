@@ -14,10 +14,6 @@ Processor::Processor(Scheduler* P) :P_Scheduler(P)
 	Total_Busy = Total_TRT = Total_Idle = PLoad = PUtil = TimetoFinish = 0;
 }
 
-int Processor::getProcessorNumber(int index)
-{
-	return ProcessorNumber;
-}
 
 float Processor::CalcPLoad()
 {
@@ -37,16 +33,6 @@ bool Processor::ProcessorState() const
 	if (RunningProcess)
 		return true;
 	return false;
-}
-void Processor::increase_Total_Busy(int x)
-{
-	Total_Busy += x;
-}
-
-void Processor::AddTo_Total_TRT(int x)
-{
-	Total_TRT += x;
-
 }
 
 int Processor::GetTimetoFinish()
@@ -99,6 +85,15 @@ void Processor::set_ActiveAtTime(int n)
 int Processor::get_ActiveAtTime()
 {
 	return ActiveAtTime;
+}
+
+void Processor::KillOrphan(Process* p)
+{
+	if (!p)
+		return;
+	P_Scheduler->SearchOrphan(p);
+	KillOrphan(p->getLChild());
+	KillOrphan(p->getRChild());
 }
 
 

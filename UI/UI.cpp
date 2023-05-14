@@ -23,7 +23,7 @@ void UI::UpdateInterface(Scheduler* SchedPtr, int mode)
 				cout << " [FCFS]: ";
 			else if (i < SchedPtr->GetNFCFS() + SchedPtr->GetNSJF())
 				cout << " [SJF ]: ";
-			else if (i < SchedPtr->GetNRR() + SchedPtr->GetNSJF())
+			else if (i < SchedPtr->GetNFCFS()+ SchedPtr->GetNRR() + SchedPtr->GetNSJF())
 				cout << " [RR  ]: ";
 			else 
 				cout << " [EDF ]: ";

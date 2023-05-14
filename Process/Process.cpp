@@ -2,41 +2,48 @@
 
 Process::Process()
 {
-	NUM_IO = 0;
+	Total_IO_D=NUM_IO = 0;
 	AT = TT = TRT = WT = PID = CT = RT = 0;
 	RemainingTime = 0;
+	DeadLine = 0;
 	TimeToReadyBack = -1;
-	child = nullptr;
+	Parent = LChild = nullptr;
+	RChild = nullptr;
+	IsChild = false;
 }
-Process::Process(int AT, int PID, int CT)
-{
-	SetAT(AT);
-	SetPID(PID);
-	SetCT(CT);
-	child = nullptr;
-}
-void Process::SetAT(int at)
+Process::Process(int at, int pid, int ct, int num_io, int deadline)
 {
 	AT = at;
-}
-void Process::SetCT(int ct)
-{
+	PID = pid;
 	CT = ct;
+	NUM_IO = num_io;
+	DeadLine = deadline;
+	Parent = LChild = nullptr;
+	RChild = nullptr;
+	IsChild = false;
+	TimeToReadyBack = -1;
 	RemainingTime = ct;
-}
-void Process::SetPID(int id)
-{
-	PID = id;
-}
-void Process::SetNUM_IO(int n)
-{
-	NUM_IO = n;
+	Total_IO_D = TT = TRT = WT = RT = 0;
+
 }
 
-void Process::Setdeadline(int n)
+void Process::SetIsChild()
 {
-	deadline = n;
+	IsChild = true;
 }
+void Process::SetLChild(Process* P)
+{
+	LChild = P;
+}
+void Process::SetRChild(Process* P)
+{
+	RChild = P;
+}
+void Process::SetParent(Process* P)
+{
+	Parent = P;
+}
+
 
 void Process::setPair(int first, int second)
 {
@@ -49,19 +56,10 @@ void Process::setPair(int first, int second)
 void Process::SetTT(int x)
 {
 	TT = x;
-	SetTRT();
-	SetWT();
-}
-
-void Process::SetTRT()
-{
 	TRT = TT - AT;
-}
-
-void Process::SetWT()
-{
 	WT = TRT - CT;
 }
+
 
 
 
@@ -70,10 +68,6 @@ void Process::DecreaseRemainingTime()
 	RemainingTime--;
 }
 
-void Process::PrintID()
-{
-	std::cout << PID;
-}
 
 int Process::getAT()
 {
@@ -98,7 +92,7 @@ int Process::getTRT()
 }
 int Process::get_Total_IO_D()
 {
-
+	
 	return Total_IO_D;
 }
 int Process::getWT()
@@ -109,13 +103,26 @@ int Process::getRT()
 {
 	return RT;
 }
+Process* Process::getLChild()
+{
+	return LChild;
+}
+Process* Process::getRChild()
+{
+	return RChild;
+}
+
 int Process::getRemainingTime()
 {
 	return RemainingTime;
 }
 int Process::getdeadline()
 {
-	return deadline;
+	return DeadLine;
+}
+bool Process::getIsChild()
+{
+	return IsChild;
 }
 void  Process::setRT(int x)
 {
@@ -152,10 +159,6 @@ int Process::Get_TimeToReadyBack()
 	return TimeToReadyBack;
 }
 
-Process* Process::GetChild()
-{
-	return child;
-}
 
 void Process::PopFirstIO()
 {
@@ -171,23 +174,23 @@ std::ostream& operator<<(std::ostream& out, Process* p)
 }
 
 
-bool operator >( Process p1, Process p2)
+bool Process::operator >( Process p2)
 {
-	if (p1.RemainingTime > p2.RemainingTime)
+	if (RemainingTime > p2.RemainingTime)
 		return true;
 	return false;
 }
 
-bool operator<(Process p1, Process p2)
+bool Process::operator<(Process p2)
 {
-	if (p1.deadline < p2.deadline)
+	if (DeadLine < p2.DeadLine)
 		return true;
 	return false;
 }
 
-bool operator!=(Process P1, Process P2)
+bool Process::operator!=(Process P2)
 {
-	if (P1.AT != P2.AT)
+	if (AT != P2.AT)
 		return true;
 	return false;
 }

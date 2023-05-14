@@ -15,24 +15,23 @@ class Process
 	Queue<Pair*> IO;   //First is IO_R ---------- Second is IO_D
 	int NUM_IO;    // number of IO operation 
 	int RemainingTime;  // the time to finish executing and go to terminated list
-	Process* child;  // pointer to its child when forking
+	Process* LChild;  // pointer to its left child when forking
+	Process* RChild;  // pointer to its right child when forking
+	Process* Parent;
+	bool IsChild;
 	int Total_IO_D;
 	int TimeToReadyBack;  //the time at which the process return to ready queue 
-	int deadline;
+	int DeadLine;
 public:
 	Process();
-	Process(int AT, int PID, int CT);
-	void SetAT(int at);
-	void SetCT(int ct);
-	void SetPID(int id);
-	void SetNUM_IO(int n);
-	void Setdeadline(int n);
+	Process(int at, int pid, int ct,int num_io=0,int deadline=0);
+	void SetIsChild();
+	void SetLChild(Process* P);
+	void SetRChild(Process* P);
+	void SetParent(Process* P);
 	void setPair(int first, int second);
 	void DecreaseRemainingTime();
 	void SetTT(int x);
-	void SetTRT();
-	void SetWT();
-	void PrintID();
 	int getAT();
 	int getCT();
 	int getPID();
@@ -43,6 +42,7 @@ public:
 	int getRT();
 	int getRemainingTime();
 	int getdeadline();
+	bool getIsChild();
 
 	void setRT(int x);
 	~Process();
@@ -53,13 +53,14 @@ public:
 	/*return the timestep when the process will move from BLK queue to Shortest ready list*/
 	int Get_TimeToReadyBack();
 	/*Return the pointer the child process (Forked Process)*/
-	Process* GetChild();
+	Process* getLChild();
+	Process* getRChild();
 	/*delete the first IO pair after the process return to ready queue*/
 	void PopFirstIO();
 
-	friend bool operator >( Process p1, Process p2);
-	friend bool operator <(Process p1, Process p2);
-	friend bool operator !=(Process p1, Process P2);
+	 bool operator >(Process p2);
+	 bool operator <(Process p2);
+	 bool operator !=(Process P2);
 	friend std::ostream& operator <<(std::ostream& out, Process* p);
 };
 

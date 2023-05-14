@@ -92,9 +92,6 @@
     <ClCompile Include="UI\UI.cpp">
       <Filter>UI</Filter>
     </ClCompile>
-    <ClCompile Include="Processor\FCFS.cpp">
-      <Filter>Processor</Filter>
-    </ClCompile>
     <ClCompile Include="Processor\Processor.cpp">
       <Filter>Processor</Filter>
     </ClCompile>
@@ -111,6 +108,9 @@
       <Filter>Process</Filter>
     </ClCompile>
     <ClCompile Include="Processor\EDF.cpp">
+      <Filter>Processor</Filter>
+    </ClCompile>
+    <ClCompile Include="Processor\FCFS.cpp">
       <Filter>Processor</Filter>
     </ClCompile>
   </ItemGroup>
