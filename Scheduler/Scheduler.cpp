@@ -248,9 +248,6 @@ void Scheduler::Simulate()
 					SP->AddToReady(P);
 				else
 					break;
-				if (LP->Ready_isEmpty())
-					break;
-				CalcLStQueue();
 			}
 		}
 		Forking();
