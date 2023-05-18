@@ -1,125 +1,104 @@
 #include "Scheduler.h"
 #include<iostream>
-
+//---------------------------------------- (Default constructor) -----------------------------------------------------------------//
 Scheduler::Scheduler()
 {
 	P_Processor = nullptr;
 	AVG_RT = AVG_TRT = AVG_WT = 0;
-	ShortQueue = LongQueue = timestep = 0;
+	timestep = 1;
 	LP = SP = nullptr;
-	StopTimeSteps = 3;
+	StopTimeSteps = 2;
+	OverHeat = 2;
 	PP = NFCFS = NSJF = NRR = NEDF = NP = TS = RTF = MAXW = STL = fork = 0;
-	UIPtr = nullptr;
+	UIPtr =new UI;
 }
-
-void Scheduler::Load(string FileName)
-{
-	Infile.open(FileName + ".txt", ios::in);
-	Infile >> NFCFS >> NSJF >> NRR >> NEDF;
-	SetP_Processor();
-	Infile >> TS;
-	Infile >> RTF >> MAXW >> STL >> fork;
-	Infile >> NP;
-	for (int i = 0; i < NP; i++)
-	{
-		int AT, PID, CT, NUM_IO,deadline;
-		Infile >> AT >> PID >> CT >> NUM_IO>>deadline;
-		Process* ptr = new Process(AT,PID,CT,NUM_IO,deadline);
-		for (int j = 0; j < NUM_IO; j++)
-		{
-			int first, second;
-			char c;
-			Infile >> c >> first >> c >> second >> c;
-			ptr->setPair(first, second);
-			if (j != NUM_IO - 1)
-				Infile >> c;
-		}
-		NEW.enqueue(ptr);
-	}
-	while (NFCFS > 0 && !Infile.eof())
-	{
-		int first, second;
-		Infile >> first >> second;
-		static_cast<FCFS*>(P_Processor[0])->setSIGKILL(first, second);
-	}
-	Infile.close();
-
-}
-
-void Scheduler::OP_File()
-{
-	outfile.open("OutputFile.txt", ios::out);
-	outfile << "TT       PID       AT       CT       IO_D       WT       RT       TRT      Deadline" << endl;
-	Process* p;
-	float num_p = 0;
-	for (int i = 0;i < NP;i++)
-	{
-		TRM.dequeue(p);
-		outfile << p->getTT() << "       " << p->getPID() << "        " << p->getAT() << "        " << p->getCT() << "        " << p->get_Total_IO_D() << "        ";
-		outfile << p->getWT() << "        " << p->getRT() << "        " << p->getTRT()<<"        " << p->getdeadline();
-		outfile << endl;
-		if (p->getTT() < p->getdeadline())
-			num_p++;
-	}
-
-	outfile << "Processes : " << NP << endl;
-	outfile << "AVG WT=" << AVG_WT << "      " << "AVG_RT=" << AVG_RT << "      " << "AVG TRT=" << AVG_TRT << endl;
-	outfile << "Migiration%:" << "      " << "RTF=" << RTF << "      " << "MaxW=" << MAXW << "      ";
-	outfile << "Work Steal%=" << CalcStealLimit() << endl;
-	outfile << "Forked Processes : " << endl;
-	outfile << "killed Proceeses : " << endl;
-	outfile << "Processors : " << PP << "[" << NFCFS << " FCFS ," << NSJF << " SJF ," << NRR << " RR , "<< NEDF<<" DEF ]" << endl;
-	outfile << "Procesores load" << endl;
-	for (int i = 0;i < PP;i++)
-	{
-		outfile << "P" << i + 1 << "=" << P_Processor[i]->CalcPLoad();
-		outfile << "   ";
-	}
-	outfile << endl;
-	outfile << "Processores Utiliz" << endl;
-	float sum = 0;
-	for (int i = 0;i < PP;i++)
-	{
-		sum += P_Processor[i]->CalcPUtil();
-		outfile << "P" << i + 1 << "=" << P_Processor[i]->CalcPUtil();
-		outfile << "   ";
-	}
-	outfile << endl;
-	outfile << "AVG Utilization=" << sum / PP;
-	outfile << endl;
-	outfile << "Percentage of Process completed before expected deadline=";
-	outfile << (num_p / NP) * 100;
-}
+//-----------------------------------------(Setter functions)----------------------------------------------------------------//
 void Scheduler::SetNP(int n)
 {
 	NP = n;
 }
 
-
 void Scheduler::SetP_Processor()
 {
-	int n = NFCFS + NSJF + NRR+NEDF;
+	int n = NFCFS + NSJF + NRR + NEDF;
 	PP = n;
 	P_Processor = new Processor * [n];
 	int i = 0;
-	for (;i < NFCFS;i++)
+	for (; i < NFCFS; i++)
 	{
 		P_Processor[i] = new FCFS(this, i + 1);
 	}
-	for (;i < NFCFS + NSJF;i++)
+	for (; i < NFCFS + NSJF; i++)
 	{
 		P_Processor[i] = new SJF(this, i + 1);
 	}
-	for (;i < NFCFS+NSJF+NRR;i++)
+	for (; i < NFCFS + NSJF + NRR; i++)
 	{
 		P_Processor[i] = new RR(this, i + 1);
 	}
-	for (;i <n;i++)
+	for (; i < n; i++)
 	{
 		P_Processor[i] = new EDF(this, i + 1);
 	}
 }
 
+//------------------------------------------(Getters Functions)---------------------------------------------------------------//
+int Scheduler::GetNFCFS() const
+{
+	return NFCFS;
+}
+
+int Scheduler::GetNSJF() const
+{
+	return  NSJF;
+}
+
+int Scheduler::GetNRR() const
+{
+	return NRR;
+}
+
+int Scheduler::GetNP() const
+{
+	return NP;
+}
+
+int Scheduler::GetPP() const
+{
+	return PP;
+}
+
+int Scheduler::GetTS() const
+{
+	return TS;
+}
+
+int Scheduler::GetTimeStep() const
+{
+	return timestep;
+}
+
+int Scheduler::GetRTF() const
+{
+	return RTF;
+}
+
+int Scheduler::GetMAXW() const
+{
+	return MAXW;
+}
+
+int Scheduler::getForkProbabilty() const
+{
+	return fork;
+}
+
+int Scheduler::getTotalTRT() const
+{
+	return AVG_TRT * NP;
+}
+
+//-----------------------------------------------(Adding data to Diffrente Queues )----------------------------------------------------------//
 void Scheduler::AddToNEW(Process* P)
 {
 	NEW.enqueue(P);
@@ -141,69 +120,119 @@ void Scheduler::AddToTRM(Process* P)
 	AVG_WT = AVG_WT + P->getWT() / float(NP);
 	TRM.enqueue(P);
 }
+//-----------------------------------------------(loading the input data from the file )----------------------------------------------------------//
 
-void Scheduler::AddToStoppingForked(Process* p)
+void Scheduler::Load(string FileName)
 {
-	StoppingForkedProcess.enqueue(p);
+	Infile.open(FileName + ".txt", ios::in);
+	Infile >> NFCFS >> NSJF >> NRR >> NEDF;
+	SetP_Processor();
+	Infile >> TS>>StopTimeSteps;
+	Infile >> RTF >> MAXW >> STL >> fork;
+	Infile >> NP;
+	for (int i = 0; i < NP; i++)
+	{
+		int AT, PID, CT, NUM_IO, deadline;
+		Infile >> AT >> PID >> CT >> deadline>>NUM_IO ;
+		Process* ptr = new Process(AT, PID, CT, NUM_IO,deadline);
+		for (int j = 0; j < NUM_IO; j++)
+		{
+			int first, second;
+			char c;
+			Infile >> c >> first >> c >> second >> c;
+			ptr->setPair(first, second);
+			if (j != NUM_IO - 1)
+				Infile >> c;
+		}
+		NEW.enqueue(ptr);
+	}
+	while (NFCFS > 0 && !Infile.eof())
+	{
+		int first, second;
+		Infile >> first >> second;
+		static_cast<FCFS*>(P_Processor[0])->setSIGKILL(first, second);
+	}
+	Infile.close();
+
 }
+//-------------------------------------------(printing data in output file )--------------------------------------------------------------//
 
+void Scheduler::OP_File()
+{
+	outfile.open("OutputFile.txt", ios::out);
+	outfile << "TT        PID       AT        CT        IO_D      WT        RT        TRT       Deadline" << endl;
+	Process* p;
+	float num_p = 0;
+	float num_steal_p = 0;
+	float num_Killed_p = 0;
+	float num_forked_p = 0;
+	float num_M_RR_SJF = 0;
+	float num_M_FCFS_RR = 0;
 
-float Scheduler::CalcStealLimit()
+	for (int i = 0; i < NP; i++)
+	{
+		TRM.dequeue(p);
+		outfile <<left<<setw(10)<< p->getTT() <<setw(10)<<p->getPID() <<setw(10) << p->getAT() <<setw(10)<< p->getCT() <<setw(10) << p->get_Total_IO_D();
+		outfile <<setw(10)<< p->getWT() <<setw(10) << p->getRT() <<setw(10) << p->getTRT() << setw(10) << p->getdeadline();
+		outfile << endl;
+		if (p->getTT() < p->getdeadline())
+			num_p++;
+		if (p->Getsteal())
+			num_steal_p++;
+		if (p->GetIsKilled())
+			num_Killed_p++;
+		if (p->GetIsForked())
+			num_forked_p++;
+		if (p->GetMigrate_RR_SJF())
+			num_M_RR_SJF++;
+		if (p->GetMigrate_FCFS_RR())
+			num_M_FCFS_RR++;
+	}
+
+	outfile << endl << "Processes : " << NP << endl;
+	outfile << "AVG WT=" <<setw(7)<< AVG_WT << "      " << "AVG RT=" << setw(7) << AVG_RT << "      " << "AVG TRT=" << setw(7) << AVG_TRT << endl<<endl;
+	outfile << setw(19)<<"Migiration :" <<setw(7) << "RTF  = " << (num_M_RR_SJF / NP) * 100 << " %" <<"       " << "MaxW = " << (num_M_FCFS_RR / NP) * 100 << " %" << endl;
+	outfile << setw(19) << "Work Steal :" << setw(7) << (num_steal_p / NP) * 100 << " %" << endl;
+	outfile << setw(19) << "Forked Processes :" << setw(7) << (num_forked_p / NP) * 100 << " %" << endl;
+	outfile << setw(19) << "killed Proceeses :" << setw(7) << (num_Killed_p / NP) * 100 << " %" << endl;
+	outfile << endl<<"Processors : " << PP << " [" << NFCFS << " FCFS ," << NSJF << " SJF ," << NRR << " RR , " << NEDF << " DEF ]" << endl<<endl;
+	outfile << "Procesores load" << endl;
+	for (int i = 0; i < PP; i++)
+	{
+		outfile << "P" << i + 1 << " = " <<setw(7)<< P_Processor[i]->CalcPLoad() << " %";
+		outfile << "    ";
+	}
+	outfile << endl<<endl;
+	outfile << "Processores Utiliz" << endl;
+	float sum = 0;
+	for (int i = 0; i < PP; i++)
+	{
+		sum += P_Processor[i]->CalcPUtil();
+		outfile << "P" << i + 1 << " = " <<setw(7)<<P_Processor[i]->CalcPUtil() ;
+		outfile << "    ";
+	}
+	outfile << endl;
+	outfile << "AVG Utilization = " << sum / PP<< " %";
+	outfile << endl<<endl;
+	outfile << "Percentage of Process completed before expected deadline = ";
+	outfile << (num_p / NP) * 100<< " %";
+}
+//------------------------------------------(Function which calculate the Steal Limit)---------------------------------------------------------------//
+
+float Scheduler::CalcStealLimit() const
 {
 	float StealLimit;
-	if(LP)
+	if (LP)
 		if (LP->NumRDY() > 0)
 		{
-			StealLimit = ((float(LongQueue) - ShortQueue) / LongQueue) * 100;
+			StealLimit = ((float(LP->GetTimetoFinish()) - SP->GetTimetoFinish()) / LP->GetTimetoFinish()) * 100;
 			return StealLimit;
 		}
 	return 0;
 }
 
-int Scheduler::GetNFCFS() const
-{
-	return NFCFS;
-}
+//---------------------------------------------(Simulation function)------------------------------------------------------------//
 
-int Scheduler::GetNSJF() const
-{
-	return  NSJF;
-}
-
-int Scheduler::GetNRR() const
-{
-	return NRR;
-}
-int Scheduler::GetNP()
-{
-	return NP;
-}
-int Scheduler::GetPP() const
-{
-	return PP;
-}
-int Scheduler::GetTS() const
-{
-	return TS;
-}
-int Scheduler::GetTimeStep() const
-{
-	return timestep;
-}
-int Scheduler::GetRTF() const
-{
-	return RTF;
-}
-int Scheduler::GetMAXW() const
-{
-	return MAXW;
-}
-
-
-int Scheduler::getForkProbabilty()
-{
-	return fork;
-}
 void Scheduler::Simulate()
 {
 
@@ -214,6 +243,8 @@ void Scheduler::Simulate()
 	mode = UIPtr->ReadMode();
 	while (TRM.Getcount() != NP)
 	{
+		if (timestep % 100 == 0)
+			int x =0;
 		Process* P;
 		StopProcessor();
 		TurnOnProcessor();
@@ -222,7 +253,7 @@ void Scheduler::Simulate()
 		{
 			while (NEW.peek(P) && P->getAT() == timestep)
 			{
-				CalcLStQueue();
+				MoveToShortest("ALL");
 				NEW.dequeue(P);
 				if (SP)
 					SP->AddToReady(P);
@@ -237,15 +268,19 @@ void Scheduler::Simulate()
 		}
 
 		BackToReady();
-
+		
 		if (timestep % STL == 0)
 		{
-			CalcLStQueue();
+			MoveToShortest("ALL");
 			while (CalcStealLimit()>40)
 			{
 				Process*P=LP->Delete_FirstProcess();
+
 				if (P)
+				{
+					P->Setsteal(true);
 					SP->AddToReady(P);
+				}
 				else
 					break;
 			}
@@ -265,6 +300,7 @@ void Scheduler::Simulate()
 	OP_File();
 }
 
+//---------------------------------------------(Return Number of Busy Processores )------------------------------------------------------------//
 
 int Scheduler::RunningProcessors() const
 {
@@ -276,23 +312,25 @@ int Scheduler::RunningProcessors() const
 	}
 	return count;
 }
+//--------------------------------------------(Functions for Handiling the program Interface)-------------------------------------------------------------//
 
-void Scheduler::PrintProcessor(int index)
+void Scheduler::PrintProcessor(int index) const
 {
 	P_Processor[index]->PrintReady();
 }
 
-void Scheduler::PrintBLK()
+void Scheduler::PrintBLK() const
 {
 	BLK.Print(BLK.Getcount(), " BLK: ");
 }
 
-void Scheduler::PrintTRM()
+void Scheduler::PrintTRM() const
 {
 	TRM.Print(TRM.Getcount(), " TRM: ");
 }
+//-----------------------------------------(funtion return the ID of the running process in a processor which have the passed index)---------------------------------//
 
-int Scheduler::GetRunningID(int index)
+int Scheduler::GetRunningID(int index) const
 {
 	Process* p;
 	p = P_Processor[index]->getRunningProcess();
@@ -302,51 +340,15 @@ int Scheduler::GetRunningID(int index)
 		return -1;
 }
 
-void Scheduler::CalcLStQueue()
-{
-	int min=0;
-	int max=0;
-	Processor* lP = NULL;
-	Processor* sP = NULL;
-	bool WorkingProcessor = false;
-	int i;
-	
-	for(i=0;i<PP&&!sP;i++)
-		if (!P_Processor[i]->get_StopMode())
-		{
-			sP = lP = P_Processor[i];
-			min = max = P_Processor[i]->GetTimetoFinish();
-		}
-		
-	
-	for (;i < PP;i++)
-	{	
-		if (!P_Processor[i]->get_StopMode())
-		{
-			if (P_Processor[i]->GetTimetoFinish() < min)
-			{
-				min = P_Processor[i]->GetTimetoFinish();
-				sP = P_Processor[i];
-			}
-			else if (P_Processor[i]->GetTimetoFinish() > max)
-			{
-				max = P_Processor[i]->GetTimetoFinish();
-				lP = P_Processor[i];
-			}
-		}
-	}
-	ShortQueue = min;
-	LongQueue = max;
-	LP = lP;
-	SP = sP;	
-}
+//----------------------------------------------------(search for an orphen in the FCFS processors)-----------------------------------------------------//
 
-void Scheduler::SearchOrphan(Process* p)
+void Scheduler::SearchOrphan(Process* p) const
 {
 	bool done = false;
 	for (int i = 0; i < NFCFS&&!done; i++)
 		done = static_cast<FCFS*>(P_Processor[i])->OrphanPosition(p);
 }
+//-----------------------------------------------(move process from the BLK Queue to the Shortest ready Queue )-----------------------------------------------------------//
 
 void Scheduler::BackToReady()
 {
@@ -356,7 +358,7 @@ void Scheduler::BackToReady()
 	{
 		if (p->Get_TimeToReadyBack() == timestep)
 		{
-			CalcLStQueue();
+			MoveToShortest("ALL");
 			BLK.dequeue(p);
 			if (SP)
 				SP->AddToReady(p);
@@ -371,6 +373,7 @@ void Scheduler::BackToReady()
 		
 	}
 }
+//-----------------------------------------------(Killing the Process which is in FCFS Processor)----------------------------------------------------------//
 
 void Scheduler::KillFCFS_Process()
 {
@@ -383,25 +386,26 @@ void Scheduler::KillFCFS_Process()
 	}
 }
 
+//------------------------------------------(Stopping Processors that are Overheat)---------------------------------------------------------------//
 
 void Scheduler::StopProcessor()
 {
 	for (int i = 0; i < PP; i++)
 	{
 		int num = rand() % 100;
-		if (num < 5 && !P_Processor[i]->get_StopMode())
+		if (num == OverHeat && !P_Processor[i]->get_StopMode())
 		{
 			Process* temp;
 			P_Processor[i]->set_StopMode(true);
 			P_Processor[i]->set_ActiveAtTime(StopTimeSteps + timestep);
-			CalcLStQueue();
+			MoveToShortest("ALL");
 			temp= P_Processor[i]->getRunningProcess();
 			P_Processor[i]->SetRunningProcess(nullptr);
 			if (temp)
 			{
 				if (temp->getIsChild())
 				{
-					if (!MoveToShortest(temp, "FCFS"))
+					if (!MoveToShortest("FCFS", temp))
 						StoppingForkedProcess.enqueue(temp);
 				}
 				else if (SP)
@@ -411,7 +415,7 @@ void Scheduler::StopProcessor()
 			}
 			while (!P_Processor[i]->Ready_isEmpty())
 			{
-				CalcLStQueue();
+				MoveToShortest("ALL");
 				if (i < NFCFS)
 				{
 					temp = static_cast<FCFS*>(P_Processor[i])->removeProcess();
@@ -420,7 +424,7 @@ void Scheduler::StopProcessor()
 					temp = P_Processor[i]->Delete_FirstProcess();
 				if (temp->getIsChild())
 				{
-					if (!MoveToShortest(temp, "FCFS"))
+					if (!MoveToShortest("FCFS", temp))
 						StoppingForkedProcess.enqueue(temp);
 				}
 				else if (SP)
@@ -433,6 +437,7 @@ void Scheduler::StopProcessor()
 		}
 	}
 }
+//---------------------------------------------(Return the processors to work)------------------------------------------------------------//
 
 void Scheduler::TurnOnProcessor()
 {
@@ -444,168 +449,110 @@ void Scheduler::TurnOnProcessor()
 			P_Processor[i]->set_ActiveAtTime(0);
 		}
 	}
-	while (!StopQueue.isEmpty())
-	{
-		CalcLStQueue();
-		if (!SP)
-			break;
-		Process* p;
-		StopQueue.dequeue(p);
-		SP->AddToReady(p);
-	}
 	while (!StoppingForkedProcess.isEmpty())
 	{
 		Process* p;
 		StoppingForkedProcess.peek(p);
-		if (MoveToShortest(p, "FCFS"))
+		if (MoveToShortest("FCFS", p))
 		{
 			StoppingForkedProcess.dequeue(p);
 		}
 		else
 			break;
 	}
+	while (!StopQueue.isEmpty())
+	{
+		MoveToShortest("ALL");
+		if (!SP)
+			break;
+		Process* p;
+		StopQueue.dequeue(p);
+		SP->AddToReady(p);
+	}
 }
+//-----------------------------------------------(Moving Process to the Shortest ready Queue)----------------------------------------------------------//
 
-bool Scheduler::MoveToShortest(Process*& p, string type)
+bool Scheduler::MoveToShortest(string type, Process* p)
 {
 	int min;
+	int max;
 	bool WorkingProcess;
 	int index;
+	min = -1;
+	max = -1;
+	int num_p;
 	if (type == "ALL")
 	{
-
+		num_p = PP;
 		index = 0;
-		min = -1;
-		while (index < PP)
+	}
+	else if (type == "FCFS")
+	{
+		num_p = NFCFS;
+		index = 0;
+	}
+	else if (type == "SJF")
+	{
+		num_p = NFCFS + NSJF;
+		index = NFCFS;
+	}
+	else
+	{
+		num_p = NFCFS + NSJF + NRR;
+		index = NFCFS + NSJF;
+	}
+
+
+	while (index < num_p)
+	{
+		if (!P_Processor[index]->get_StopMode())
 		{
-			if (!P_Processor[index]->get_StopMode())
-			{
-				min = index;
-				break;
-			}
-			index++;
+			min = max = index;
+			break;
 		}
-		if (min == -1)
+		index++;
+	}
+	if (min == -1 && num_p == PP)
+	{
+		LP = NULL;
+		SP = NULL;
+		if (p)
 		{
 			if (p->getIsChild())
 				StoppingForkedProcess.enqueue(p);
 			else
 				StopQueue.enqueue(p);
 		}
-		else
-		{
-			int i = min + 1;
-			while (i < PP)
-			{
-				if (!P_Processor[i]->get_StopMode() && P_Processor[min]->GetTimetoFinish() > P_Processor[i]->GetTimetoFinish())
-				{
-					min = i;
-				}
-				i++;
-			}
-			P_Processor[min]->AddToReady(p);
-		}
 	}
-	else if (type == "FCFS")
+	else if (min == -1)
 	{
-		index = 0;
-		min = -1;
-		while (index < NFCFS)
-		{
-			if (!P_Processor[index]->get_StopMode())
-			{
-				min = index;
-				break;
-			}
-			index++;
-		}
-
-		if (min == -1)
-		{
-			return false;
-		}
-		else
-		{
-			int i = min + 1;
-			while (i < NFCFS)
-			{
-				if (!P_Processor[i]->get_StopMode() && P_Processor[min]->GetTimetoFinish() > P_Processor[i]->GetTimetoFinish())
-				{
-					min = i;
-				}
-				i++;
-			}
-			P_Processor[min]->AddToReady(p);
-		}
+		return false;
 	}
-	else if (type == "SJF")
+	else
 	{
-		index = NFCFS;
-		min = -1;
-		while (index < NFCFS + NSJF)
+		int i = min + 1;
+		while (i < num_p)
 		{
-			if (!P_Processor[index]->get_StopMode())
+			if (!P_Processor[i]->get_StopMode() && P_Processor[min]->GetTimetoFinish() > P_Processor[i]->GetTimetoFinish())
 			{
-				min = index;
-				break;
+				min = i;
 			}
-			index++;
-		}
-
-		if (min == -1)
-		{
-			return false;
-		}
-		else
-		{
-			int i = min + 1;
-			while (i < NFCFS + NSJF)
+			if (!P_Processor[i]->get_StopMode() && P_Processor[max]->GetTimetoFinish() < P_Processor[i]->GetTimetoFinish())
 			{
-				if (!P_Processor[i]->get_StopMode() && P_Processor[min]->GetTimetoFinish() > P_Processor[i]->GetTimetoFinish())
-				{
-					min = i;
-				}
-				i++;
+				max = i;
 			}
-			P_Processor[min]->AddToReady(p);
+			i++;
 		}
-
-
-	}
-	if (type == "RR")
-	{
-		index = NFCFS+NSJF;
-		min = -1;
-		while (index < NFCFS + NSJF+NRR)
+		LP = P_Processor[max];
+		SP = P_Processor[min];
+		if (p)
 		{
-			if (!P_Processor[index]->get_StopMode())
-			{
-				min = index;
-				break;
-			}
-			index++;
-		}
-
-		if (min == -1)
-		{
-			return false;
-		}
-		else
-		{
-			int i = min + 1;
-			while (i < NFCFS + NSJF+NRR)
-			{
-				if (!P_Processor[i]->get_StopMode() && P_Processor[min]->GetTimetoFinish() > P_Processor[i]->GetTimetoFinish())
-				{
-					min = i;
-				}
-				i++;
-			}
 			P_Processor[min]->AddToReady(p);
 		}
 	}
 	return true;
 }
+//---------------------------------------------------------------------------------------------------------//
 
 void Scheduler::Forking()
 {

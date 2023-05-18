@@ -19,14 +19,17 @@ void FCFS::SchedulerAlgo()
 	{
 		if (!ReadyList.isEmpty())
 		{
-			Process* P;
-			P = ReadyList.getEntry(1);
-			ReadyList.remove(1);
-			TimetoFinish -= P->getRemainingTime();
+			Process* P = removeProcess();
+
 			TWT = P_Scheduler->GetTimeStep() - P->getAT() - (P->getCT() - P->getRemainingTime());
 			if (TWT > P_Scheduler->GetMAXW() && P_Scheduler->GetNRR() && !P->getIsChild() )
 			{
-				if (!P_Scheduler->MoveToShortest(P, "RR"))
+				if (P_Scheduler->MoveToShortest("RR" , P))
+				{
+					P->SetMigrate_FCFS_RR(true);
+					SchedulerAlgo();
+				}
+				else
 				{
 					RunningProcess = P;
 					RunningProcess->setRT(P_Scheduler->GetTimeStep());
@@ -51,7 +54,6 @@ void FCFS::SchedulerAlgo()
 			{
 				P_Scheduler->AddToBLK(RunningProcess);
 				RunningProcess = nullptr;
-				return;
 			}
 		}
 		else
@@ -68,7 +70,7 @@ void FCFS::AddToReady(Process* P)
 	TimetoFinish += P->getRemainingTime();
 }
 
-void FCFS::PrintReady()
+void FCFS::PrintReady() const
 {
 	ReadyList.Print(StopMode);
 }
@@ -150,8 +152,8 @@ bool FCFS::KillProcess()
 
 				if (found)
 				{
-					SIGKILL.dequeue(Signal);
-					delete Signal;
+					p->SetIsKilled(true);
+					popKillSignal();
 					KillOrphan(p->getLChild());
 					KillOrphan(p->getRChild());
 					if (SIGKILL.peek(Signal))
@@ -171,6 +173,7 @@ bool FCFS::OrphanPosition(Process*& p)
 	Process* temp;
 	if (RunningProcess == p)
 	{
+		p->SetIsKilled(true);
 		P_Scheduler->AddToTRM(RunningProcess);
 		RunningProcess = nullptr;
 		return true;
@@ -187,6 +190,7 @@ bool FCFS::OrphanPosition(Process*& p)
 	}
 	if (found)
 	{
+		p->SetIsKilled(true);
 		P_Scheduler->AddToTRM(p);
 		ReadyList.remove(position);
 		TimetoFinish -= p->getRemainingTime();
@@ -206,7 +210,7 @@ void FCFS::popKillSignal()
 	}
 }
 
-bool FCFS::Ready_isEmpty()
+bool FCFS::Ready_isEmpty() const
 {
 	return ReadyList.isEmpty();
 }
@@ -216,6 +220,8 @@ void FCFS::AddForkedProcess()
 	int RandomNum = rand() % 100;
 	if (RandomNum < P_Scheduler->getForkProbabilty() && RunningProcess && (!RunningProcess->getLChild() || !RunningProcess->getRChild()))
 	{
+		RunningProcess->SetIsForked(true);
+
 		int pid = P_Scheduler->GetNP() + 1;
 		P_Scheduler->SetNP(pid);
 		Process* ptr = new Process(P_Scheduler->GetTimeStep(), pid, RunningProcess->getRemainingTime());
@@ -225,12 +231,12 @@ void FCFS::AddForkedProcess()
 		if (!RunningProcess->getLChild())
 		{
 			RunningProcess->SetLChild(ptr);
-			P_Scheduler->MoveToShortest(ptr, "FCFS");
+			P_Scheduler->MoveToShortest("FCFS", ptr);
 		}
 		else
 		{
 			RunningProcess->SetRChild(ptr);
-			P_Scheduler->MoveToShortest(ptr, "FCFS");
+			P_Scheduler->MoveToShortest("FCFS", ptr);
 		}
 	}
 	

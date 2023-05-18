@@ -1,5 +1,5 @@
 #include "Processor.h"
-
+//---------------------------------(default constructor )----------------------------------------//
 Processor::Processor()
 {
 	RunningProcess = nullptr;
@@ -7,26 +7,63 @@ Processor::Processor()
 	StopMode = false;
 	ActiveAtTime = 0;
 }
-
+//------------------------------------------(non default constructor )-------------------------------//
 Processor::Processor(Scheduler* P) :P_Scheduler(P)
 {
 	RunningProcess = nullptr;
 	Total_Busy = Total_TRT = Total_Idle = PLoad = PUtil = TimetoFinish = 0;
 }
-
-
-float Processor::CalcPLoad()
+//----------------------------------(setter functions)---------------------------------------//
+void Processor::SetRunningProcess(Process* p)
 {
-	return (float(Total_Busy) / Total_TRT)*100;
+	RunningProcess = p;
 }
 
+void Processor::set_StopMode(bool b)
+{
+	StopMode = b;
+}
+void Processor::set_ActiveAtTime(int n)
+{
+	ActiveAtTime = n;
+}
+void Processor::SetTotal_Idle()
+{
+	Total_Idle = P_Scheduler->GetTimeStep() - Total_Busy;
+}
+//-------------------------------------(Getter functions)------------------------------------//
+bool Processor::get_StopMode()const
+{
+	return StopMode;
+}
+int Processor::get_ActiveAtTime()const
+{
+	return ActiveAtTime;
+}
+int Processor::GetTimetoFinish()const
+{
+	return TimetoFinish;
+
+}
+Process* Processor::getRunningProcess() const
+{
+	return RunningProcess;
+}
+//-------------------------------------------------------------------------//
+float Processor::CalcPLoad()
+{
+	PLoad = (float(Total_Busy) / Total_TRT) * 100;
+	return PLoad;
+}
+//-------------------------------------------------------------------------//
 float Processor::CalcPUtil()
 {
 	SetTotal_Idle();
-	return (float(Total_Busy) / (Total_TRT + Total_Idle))*100;
+	PUtil = (float(Total_Busy) / (Total_Busy + Total_Idle)) * 100;
+	return PUtil;
 }
 
-
+//------------------------------------(return true if busy otherwise return false )-------------------------------------//
 
 bool Processor::ProcessorState() const
 {
@@ -35,25 +72,7 @@ bool Processor::ProcessorState() const
 	return false;
 }
 
-int Processor::GetTimetoFinish()
-{
-	return TimetoFinish;
-}
-//-----------------------------------------------------//
-Process* Processor::getRunningProcess() const
-{
-	return RunningProcess;
-}
-//-----------------------------------------------------//
-void Processor::SetRunningProcess(Process* p)
-{
-	RunningProcess = p;
-}
-
-void Processor::SetTotal_Idle()
-{
-	Total_Idle = P_Scheduler->GetTimeStep() - Total_Busy;
-}
+//-------------------------------(return true if th process finished CPU time)------------------------------------------//
 
 bool Processor::MoveToTRM()
 {
@@ -67,25 +86,7 @@ bool Processor::MoveToTRM()
 	return false;
 }
 
-void Processor::set_StopMode(bool b)
-{
-	StopMode = b;
-}
-
-bool Processor::get_StopMode()
-{
-	return StopMode;
-}
-
-void Processor::set_ActiveAtTime(int n)
-{
-	ActiveAtTime = n;
-}
-
-int Processor::get_ActiveAtTime()
-{
-	return ActiveAtTime;
-}
+//-------------------------------------------(search for orphen to be killed )------------------------------------//
 
 void Processor::KillOrphan(Process* p)
 {
@@ -96,5 +97,6 @@ void Processor::KillOrphan(Process* p)
 	KillOrphan(p->getRChild());
 }
 
+int Processor::Total_TRT;
 
 

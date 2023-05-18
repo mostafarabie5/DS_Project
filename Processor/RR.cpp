@@ -5,7 +5,7 @@ RR::RR(Scheduler* sched_ptr, int num) :Processor(sched_ptr)
 	ProcessorNumber = num;
 	count = 0;
 }
-
+//---------------------------------------------------------------//
 void RR::SchedulerAlgo()
 {
 	if (RunningProcess)
@@ -33,56 +33,61 @@ void RR::SchedulerAlgo()
 		}
 		if (count == P_Scheduler->GetTS())
 		{
-			P_Scheduler->MoveToShortest(RunningProcess, "ALL");
+			AddToReady(RunningProcess);
 			count = 0;
-			RunningProcess=nullptr;
+			RunningProcess = nullptr;
 		}
-		
+
 
 	}
 	else
 	{
-		if (!ReadyQueue.isEmpty())
+		bool x = false;
+		while (!x && !ReadyQueue.isEmpty())
 		{
 			Process* ptr;
 			ptr = Delete_FirstProcess();
 			if (ptr->getRemainingTime() < P_Scheduler->GetRTF() && P_Scheduler->GetNSJF())
 			{
-				if (!P_Scheduler->MoveToShortest(ptr, "SJF"))
+				if (!P_Scheduler->MoveToShortest("SJF", ptr))
 				{
 					RunningProcess = ptr;
 					ptr->setRT(P_Scheduler->GetTimeStep());
+					x = true;
 				}
+				else
+					ptr->SetMigrate_RR_SJF(true);
 				count = 0;
 			}
 			else
 			{
 				RunningProcess = ptr;
 				ptr->setRT(P_Scheduler->GetTimeStep());
+				x = true;
 			}
+
 		}
-		
 	}
 
 }
-
+//-----------------------------------------------------//
 void RR::AddToReady(Process* P)
 {
 	TimetoFinish += P->getRemainingTime();
 	ReadyQueue.enqueue(P);
 }
-
-void RR::PrintReady()
+//-----------------------------------------------------//
+void RR::PrintReady()const
 {
-	ReadyQueue.Print(NumRDY(), " RDY: ",StopMode);
+	ReadyQueue.Print(NumRDY(), " RDY: ", StopMode);
 }
 
-
+//-----------------------------------------------------//
 int RR::NumRDY() const
 {
 	return ReadyQueue.Getcount();
 }
-
+//-----------------------------------------------------//
 void RR::AddToRun()
 {
 	if (!ReadyQueue.isEmpty())
@@ -106,8 +111,8 @@ Process* RR::Delete_FirstProcess()
 	TimetoFinish -= ptr->getRemainingTime();
 	return ptr;
 }
-
-bool RR::Ready_isEmpty()
+//-----------------------------------------------------//
+bool RR::Ready_isEmpty()const
 {
 	return ReadyQueue.isEmpty();
 }

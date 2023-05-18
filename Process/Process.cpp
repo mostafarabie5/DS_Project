@@ -2,7 +2,7 @@
 
 Process::Process()
 {
-	Total_IO_D=NUM_IO = 0;
+	Total_IO_D = NUM_IO = 0;
 	AT = TT = TRT = WT = PID = CT = RT = 0;
 	RemainingTime = 0;
 	DeadLine = 0;
@@ -10,6 +10,12 @@ Process::Process()
 	Parent = LChild = nullptr;
 	RChild = nullptr;
 	IsChild = false;
+
+	Steal = false;
+	Migrate_FCFS_RR = false;
+	Migrate_RR_SJF = false;
+	IsForked = false;
+	IsKilled = false;
 }
 Process::Process(int at, int pid, int ct, int num_io, int deadline)
 {
@@ -24,6 +30,11 @@ Process::Process(int at, int pid, int ct, int num_io, int deadline)
 	TimeToReadyBack = -1;
 	RemainingTime = ct;
 	Total_IO_D = TT = TRT = WT = RT = 0;
+	Steal = false;
+	Migrate_FCFS_RR = false;
+	Migrate_RR_SJF = false;
+	IsForked = false;
+	IsKilled = false;
 
 }
 
@@ -43,8 +54,6 @@ void Process::SetParent(Process* P)
 {
 	Parent = P;
 }
-
-
 void Process::setPair(int first, int second)
 {
 	Pair* p = new Pair;
@@ -57,7 +66,7 @@ void Process::SetTT(int x)
 {
 	TT = x;
 	TRT = TT - AT;
-	WT = TRT - CT;
+	WT = TRT - (CT - RemainingTime);
 }
 
 
@@ -69,60 +78,64 @@ void Process::DecreaseRemainingTime()
 }
 
 
-int Process::getAT()
+int Process::getAT() const
 {
 	return AT;
 }
 
-int Process::getCT()
+int Process::getCT() const
 {
 	return CT;
 }
-int Process::getPID()
+int Process::getPID() const
 {
 	return PID;
 }
-int Process::getTT()
+int Process::getTT() const
 {
 	return TT;
 }
-int Process::getTRT()
+int Process::getTRT() const
 {
 	return TRT;
 }
-int Process::get_Total_IO_D()
+int Process::get_Total_IO_D() const
 {
-	
+
 	return Total_IO_D;
 }
-int Process::getWT()
+int Process::getWT() const
 {
 	return WT;
 }
-int Process::getRT()
+int Process::getRT() const
 {
 	return RT;
 }
-Process* Process::getLChild()
+Process* Process::getLChild() const
 {
 	return LChild;
 }
-Process* Process::getRChild()
+Process* Process::getRChild() const
 {
 	return RChild;
 }
 
-int Process::getRemainingTime()
+int Process::getRemainingTime() const
 {
 	return RemainingTime;
 }
-int Process::getdeadline()
+int Process::getdeadline() const
 {
 	return DeadLine;
 }
-bool Process::getIsChild()
+bool Process::getIsChild() const
 {
 	return IsChild;
+}
+int Process::getParentID() const
+{
+	return Parent->PID;
 }
 void  Process::setRT(int x)
 {
@@ -131,13 +144,7 @@ void  Process::setRT(int x)
 }
 
 
-
-Process::~Process()
-{
-}
-
-
-bool Process::blk_request(int timestep)
+bool Process::blk_request(int timestep) const
 {
 	Pair* p = new Pair;
 	IO.peek(p);
@@ -154,7 +161,7 @@ void Process::Set_TimeToReadyBack(int n)
 		TimeToReadyBack = n + p->Second;
 }
 
-int Process::Get_TimeToReadyBack()
+int Process::Get_TimeToReadyBack() const
 {
 	return TimeToReadyBack;
 }
@@ -167,6 +174,56 @@ void Process::PopFirstIO()
 	delete p;
 }
 
+void Process::Setsteal(bool n)
+{
+	Steal = n;
+}
+
+bool Process::Getsteal() const
+{
+	return Steal;
+}
+
+void Process::SetIsKilled(bool n)
+{
+	IsKilled = n;
+}
+
+bool Process::GetIsKilled() const
+{
+	return IsKilled;
+}
+
+void Process::SetMigrate_RR_SJF(bool n)
+{
+	Migrate_RR_SJF = n;
+}
+
+void Process::SetMigrate_FCFS_RR(bool n)
+{
+	Migrate_FCFS_RR = n;
+}
+
+bool Process::GetMigrate_RR_SJF() const
+{
+	return Migrate_RR_SJF;
+}
+
+void Process::SetIsForked(bool n)
+{
+	IsForked = n;
+}
+
+bool Process::GetIsForked() const
+{
+	return IsForked;
+}
+
+bool Process::GetMigrate_FCFS_RR() const
+{
+	return Migrate_FCFS_RR;
+}
+
 std::ostream& operator<<(std::ostream& out, Process* p)
 {
 	out << p->PID;
@@ -174,7 +231,7 @@ std::ostream& operator<<(std::ostream& out, Process* p)
 }
 
 
-bool Process::operator >( Process p2)
+bool Process::operator >(Process p2)
 {
 	if (RemainingTime > p2.RemainingTime)
 		return true;
@@ -193,4 +250,7 @@ bool Process::operator!=(Process P2)
 	if (AT != P2.AT)
 		return true;
 	return false;
+}
+Process::~Process()
+{
 }

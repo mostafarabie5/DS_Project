@@ -8,7 +8,7 @@ UI::UI()
 
 }
 
-void UI::UpdateInterface(Scheduler* SchedPtr, int mode)
+void UI::UpdateInterface(Scheduler* SchedPtr, int mode) const
 {
 
 	if (mode == 1 || mode == 2)
@@ -68,14 +68,14 @@ void UI::UpdateInterface(Scheduler* SchedPtr, int mode)
 	}
 }
 
-int UI::ReadMode()
+int UI::ReadMode() const
 {
 	int n;
 	cout << "1.Interactive Mode " << endl << "2.Step_By_Step Mode" << endl << "3.Silent Mode" << endl;
 	cin >> n;
 	return n;
 }
-string UI::ReadFileName()
+string UI::ReadFileName() const
 {
 	cout << "Enter Name of the file " << endl;
 	string FileName;

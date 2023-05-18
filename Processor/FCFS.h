@@ -6,11 +6,16 @@ class FCFS :public Processor
 	static Queue< Pair*> SIGKILL;   // First is the time ------ Second is the ID
 public:
 	FCFS(Scheduler* sched_ptr, int num);
-	int NumRDY()const; // return number of items in ready list
+	/*return number of items in ready list*/
+	int NumRDY()const;
+	/*function that run the process depending on type of the processor*/
 	void SchedulerAlgo();
+	/*Move process from New Queue to Raedy Queue */
 	void AddToReady(Process* P);
-	void PrintReady();
-	static void setSIGKILL(int time,int Id);
+	/*printing Ready Queue in console*/
+	void PrintReady()const;
+	/**/
+	static void setSIGKILL(int time, int Id);
 	//Delete the first non forked process from FCFS
 	Process* Delete_FirstProcess();
 	/*Search for the process which I recieve signal to kill to and move it to TRM Queue
@@ -22,11 +27,11 @@ public:
 	bool OrphanPosition(Process*& p);
 	/*remove the Kill Signal after use it with the process*/
 	void popKillSignal();
-
-	bool Ready_isEmpty();
-
+	/*Check if ready is empty return true else retrun false */
+	bool Ready_isEmpty()const;
+	/**/
 	void AddForkedProcess();
 	//Remove first process from the ready list (forked or not) when Overheat Processor
-	Process* removeProcess();   
+	Process* removeProcess();
 };
 

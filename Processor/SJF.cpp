@@ -4,7 +4,7 @@ SJF::SJF(Scheduler* sched_ptr, int num) :Processor(sched_ptr)
 {
 	ProcessorNumber = num;
 }
-
+//--------------------------------------------------------------//
 void SJF::SchedulerAlgo()
 {
 	if (RunningProcess)
@@ -42,20 +42,20 @@ void SJF::SchedulerAlgo()
 //--------------------------------------------------------------//
 void SJF::AddToReady(Process* P)
 {
-	TimetoFinish = TimetoFinish+P->getRemainingTime();
+	TimetoFinish = TimetoFinish + P->getRemainingTime();
 	ReadyList.add(P);
 }
-//-----------------------------------------------------------//
-void SJF::PrintReady()
+//--------------------------------------------------------------//
+void SJF::PrintReady()const
 {
 	ReadyList.Print(StopMode);
 }
-//--------------------------------------------------------//
+//--------------------------------------------------------------//
 int SJF::NumRDY() const
 {
 	return ReadyList.getLength();
 }
-//-----------------------------------------------------//
+//--------------------------------------------------------------//
 
 
 Process* SJF::Delete_FirstProcess()
@@ -67,10 +67,8 @@ Process* SJF::Delete_FirstProcess()
 	TimetoFinish -= ptr->getRemainingTime();
 	return ptr;
 }
-
-bool SJF::Ready_isEmpty()
+//--------------------------------------------------------------//
+bool SJF::Ready_isEmpty()const
 {
 	return ReadyList.isEmpty();
 }
-
-

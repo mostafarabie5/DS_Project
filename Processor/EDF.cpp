@@ -10,7 +10,7 @@ void EDF::SchedulerAlgo()
 
 	if (RunningProcess)
 	{
-		if (!ReadyList.isEmpty()&&RunningProcess->getdeadline() > ReadyList.peek()->getdeadline())
+		if (!ReadyList.isEmpty() && RunningProcess->getdeadline() > ReadyList.peek()->getdeadline())
 		{
 			AddToReady(RunningProcess);
 			RunningProcess = nullptr;
@@ -42,7 +42,7 @@ void EDF::AddToReady(Process* P)
 	ReadyList.add2(P);
 }
 //-----------------------------------------------------//
-void EDF::PrintReady()
+void EDF::PrintReady()const
 {
 	ReadyList.Print(StopMode);
 }
@@ -72,8 +72,8 @@ Process* EDF::Delete_FirstProcess()
 	TimetoFinish -= ptr->getRemainingTime();
 	return ptr;
 }
-
-bool EDF::Ready_isEmpty()
+//-----------------------------------------------------//
+bool EDF::Ready_isEmpty()const
 {
 	return ReadyList.isEmpty();
 }
