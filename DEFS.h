@@ -1,14 +1,18 @@
 #ifndef _DEFS_
 #define _DEFS_
+#include<ostream>
 
-struct  IO_requests {
-	int IO_R;
-	int IO_D;
-};
-
-struct SIG_KILL
+struct Pair
 {
-	int F, S;
+	int First;
+	int Second;
+
+	friend ostream& operator <<(ostream& out, Pair p)
+	{
+		out << p.First << " " << p.Second;
+		return out;
+	}
 };
+
 
 #endif

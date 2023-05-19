@@ -1,79 +1,81 @@
 #include "SJF.h"
 
-SJF::SJF(Scheduler* sched_ptr,int num):Processor(sched_ptr)
+SJF::SJF(Scheduler* sched_ptr, int num) :Processor(sched_ptr)
 {
 	ProcessorNumber = num;
 }
-
+//--------------------------------------------------------------//
 void SJF::SchedulerAlgo()
 {
 	if (RunningProcess)
 	{
-		Run();
-	}
-	else
-	{
-		if (!ReadyList.isEmpty())
+		Process* Running = RunningProcess;
+
+		Total_Busy++;
+
+		RunningProcess->DecreaseRemainingTime();
+		if (!MoveToTRM())
 		{
-			AddToRun();
+			if (RunningProcess->blk_request(RunningProcess->getCT() - RunningProcess->getRemainingTime()))
+			{
+				P_Scheduler->AddToBLK(RunningProcess);
+				RunningProcess = nullptr;
+			}
+		}
+		else
+		{
+			KillOrphan(Running->getLChild());
+			KillOrphan(Running->getRChild());
 		}
 	}
+	else {
+		AddToRun();
+	}
 }
-
+//--------------------------------------------------------------//
 void SJF::AddToReady(Process* P)
 {
+	TimetoFinish = TimetoFinish + P->getRemainingTime();
 	ReadyList.add(P);
-	P->SetTransition(P_Scheduler->GetTimeStep());
 }
-
-void SJF::PrintReady()
+//--------------------------------------------------------------//
+void SJF::PrintReady()const
 {
-	ReadyList.Print();
+	ReadyList.Print(StopMode);
 }
-
+//--------------------------------------------------------------//
 int SJF::NumRDY() const
 {
 	return ReadyList.getLength();
 }
+//--------------------------------------------------------------//
 
-int SJF::CalcTimeToFinish()
+
+Process* SJF::Delete_FirstProcess()
 {
-	return 0;
+
+	Process* ptr;
+	ptr = ReadyList.peek();
+	ReadyList.remove(1);
+	TimetoFinish -= ptr->getRemainingTime();
+	return ptr;
+}
+//--------------------------------------------------------------//
+bool SJF::Ready_isEmpty()const
+{
+	return ReadyList.isEmpty();
 }
 
 void SJF::AddToRun()
 {
 	if (!ReadyList.isEmpty())
 	{
-		Process* ptr;
-		ptr = ReadyList.peek();
-		if (ptr->getTransition() == P_Scheduler->GetTimeStep())	return;
-
-		ReadyList.remove(1);
+		Process* ptr = Delete_FirstProcess();
 		SetRunningProcess(ptr);
+		ptr->setRT(P_Scheduler->GetTimeStep());
 	}
 }
 
-void SJF::Run()
+SJF::~SJF()
 {
-	int r = rand() % 100 + 1;
-	if (RunningProcess->getTransition() == P_Scheduler->GetTimeStep())
-		return;
-	if (r >= 1 && r <= 15)
-	{
-		P_Scheduler->AddToBLK(RunningProcess);
-		SetRunningProcess(nullptr);
-
-	}
-	else if (r >= 20 && r <= 30)
-	{
-		AddToReady(RunningProcess);
-		SetRunningProcess(nullptr);
-
-	}
-	else if (r >= 50 && r <= 60)
-	{
-		P_Scheduler->AddToTRM(RunningProcess);
-		SetRunningProcess(nullptr);
-	}
 }

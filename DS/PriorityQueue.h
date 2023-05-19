@@ -17,13 +17,14 @@ public:
 	bool isEmpty() const;
 
 	bool add(const ItemType& newEntry);
+	bool add2(const ItemType& newEntry);
 
 	bool remove(int position);
 	ItemType peek() const;
 
 	int getLength()const;
 
-	void Print()const;
+	void Print(bool b)const;
 }; // end PriorityQueue
 
 
@@ -58,6 +59,13 @@ bool PriorityQueue<ItemType>::add(const ItemType& newEntry)
 } // end add
 
 template<class ItemType>
+inline bool PriorityQueue<ItemType>::add2(const ItemType& newEntry)
+{
+	slistPtr->insertSorted2(newEntry);
+	return true;
+}
+
+template<class ItemType>
 bool PriorityQueue<ItemType>::remove(int position)
 {
 	// The highest-priority item is at the end of the sorted list
@@ -78,7 +86,7 @@ int PriorityQueue<ItemType>::getLength() const
 }
 
 template<class ItemType>
-void PriorityQueue<ItemType>::Print() const
+void PriorityQueue<ItemType>::Print(bool b) const
 {
-	slistPtr->Print();
+	slistPtr->Print(b);
 }

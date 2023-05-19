@@ -16,6 +16,7 @@ private:
 	// @return Either a pointer to the node before the node that contains
 	// or should contain the given entry, or nullptr if no prior node exists.
 	Node<ItemType>* getNodeBefore(const ItemType& anEntry) const;
+	Node<ItemType>* getNodeBefore2(const ItemType& anEntry) const;
 
 
 
@@ -35,6 +36,7 @@ public:
 	virtual ~LinkedSortedList();
 
 	void insertSorted(const ItemType& newEntry);
+	void insertSorted2(const ItemType& newEntry);
 
 	bool removeSorted(const ItemType& anEntry);
 
@@ -51,7 +53,7 @@ public:
 
 	ItemType getEntry(int position) const;
 
-	void Print()const;
+	void Print(bool b=false)const;
 }; // end LinkedSortedList
 
 
@@ -60,7 +62,20 @@ Node<ItemType>* LinkedSortedList<ItemType>::getNodeBefore(const ItemType& anEntr
 {
 	Node<ItemType>* curPtr = headPtr;
 	Node<ItemType>* prevPtr = nullptr;
-	while ((curPtr != nullptr) && (anEntry > curPtr->getItem()))
+	while ((curPtr != nullptr) && (*anEntry > *(curPtr->getItem())))
+	{
+		prevPtr = curPtr;
+		curPtr = curPtr->getNext();
+	} // end while
+	return prevPtr;
+}
+
+template<class ItemType>
+inline Node<ItemType>* LinkedSortedList<ItemType>::getNodeBefore2(const ItemType& anEntry) const
+{
+	Node<ItemType>* curPtr = headPtr;
+	Node<ItemType>* prevPtr = nullptr;
+	while ((curPtr != nullptr) && ( * (curPtr->getItem())) < *anEntry)
 	{
 		prevPtr = curPtr;
 		curPtr = curPtr->getNext();
@@ -140,6 +155,25 @@ void LinkedSortedList<ItemType>::insertSorted(const ItemType& newEntry)
 	} // end if
 	itemCount++;
 } // end insertSorted
+
+template<class ItemType>
+inline void LinkedSortedList<ItemType>::insertSorted2(const ItemType& newEntry)
+{
+	Node<ItemType>* newNodePtr = new Node<ItemType>(newEntry);
+	Node<ItemType>* prevPtr = getNodeBefore2(newEntry);
+	if (isEmpty() || (prevPtr == nullptr)) // Add at beginning
+	{
+		newNodePtr->setNext(headPtr);
+		headPtr = newNodePtr;
+	}
+	else // Add after node before
+	{
+		Node<ItemType>* aftPtr = prevPtr->getNext();
+		newNodePtr->setNext(aftPtr);
+		prevPtr->setNext(newNodePtr);
+	} // end if
+	itemCount++;
+}
 
 template<class ItemType>
 bool LinkedSortedList<ItemType>::removeSorted(const ItemType& anEntry)
@@ -237,12 +271,14 @@ ItemType LinkedSortedList<ItemType>::getEntry(int position) const
 
 
 template<class ItemType>
-inline void LinkedSortedList<ItemType>::Print() const
+inline void LinkedSortedList<ItemType>::Print(bool b) const
 {
 	std::cout << getLength() << " RDY: ";
 	Node<ItemType>* curptr = headPtr;
 	if (!headPtr)
 	{
+		if (b)
+			cout << " BLOCKED";
 		cout << endl;
 		return;
 	}

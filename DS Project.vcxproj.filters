@@ -81,6 +81,9 @@
     <ClInclude Include="DEFS.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Processor\EDF.h">
+      <Filter>Processor</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Scheduler\Scheduler.cpp">
@@ -88,9 +91,6 @@
     </ClCompile>
     <ClCompile Include="UI\UI.cpp">
       <Filter>UI</Filter>
-    </ClCompile>
-    <ClCompile Include="Processor\FCFS.cpp">
-      <Filter>Processor</Filter>
     </ClCompile>
     <ClCompile Include="Processor\Processor.cpp">
       <Filter>Processor</Filter>
@@ -106,6 +106,12 @@
     </ClCompile>
     <ClCompile Include="Process\Process.cpp">
       <Filter>Process</Filter>
+    </ClCompile>
+    <ClCompile Include="Processor\EDF.cpp">
+      <Filter>Processor</Filter>
+    </ClCompile>
+    <ClCompile Include="Processor\FCFS.cpp">
+      <Filter>Processor</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
