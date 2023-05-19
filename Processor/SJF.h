@@ -17,5 +17,7 @@ public:
     Process* Delete_FirstProcess();
     /*Check if ready is empty return true else retrun false */
     bool Ready_isEmpty()const;
+    /*Move the process from ready to run */
+    void AddToRun();
     ~SJF();
 };

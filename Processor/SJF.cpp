@@ -29,15 +29,8 @@ void SJF::SchedulerAlgo()
 		}
 	}
 	else {
-
-		if (!ReadyList.isEmpty())
-		{
-			Process* ptr = Delete_FirstProcess();
-			SetRunningProcess(ptr);
-			ptr->setRT(P_Scheduler->GetTimeStep());
-		}
+		AddToRun();
 	}
-
 }
 //--------------------------------------------------------------//
 void SJF::AddToReady(Process* P)
@@ -71,6 +64,16 @@ Process* SJF::Delete_FirstProcess()
 bool SJF::Ready_isEmpty()const
 {
 	return ReadyList.isEmpty();
+}
+
+void SJF::AddToRun()
+{
+	if (!ReadyList.isEmpty())
+	{
+		Process* ptr = Delete_FirstProcess();
+		SetRunningProcess(ptr);
+		ptr->setRT(P_Scheduler->GetTimeStep());
+	}
 }
 
 SJF::~SJF()
