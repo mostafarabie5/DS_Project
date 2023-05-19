@@ -117,3 +117,6 @@ bool RR::Ready_isEmpty()const
 	return ReadyQueue.isEmpty();
 }
 
+RR::~RR()
+{
+}

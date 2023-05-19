@@ -107,6 +107,7 @@ public:
 	bool MoveToShortest(string type, Process* p = NULL);
 	/**/
 	void Forking();
+	~Scheduler();
 };
 
 #include"../Processor/Processor.h"

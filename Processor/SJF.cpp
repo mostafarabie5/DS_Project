@@ -72,3 +72,7 @@ bool SJF::Ready_isEmpty()const
 {
 	return ReadyList.isEmpty();
 }
+
+SJF::~SJF()
+{
+}

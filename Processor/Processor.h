@@ -19,7 +19,7 @@ protected:
 	int ProcessorNumber;  //unique number for each processor
 	bool StopMode;
 	int ActiveAtTime;
-	
+
 public:
 	/*default constructor*/
 	Processor();
@@ -65,7 +65,7 @@ public:
 	/*Kill all the children of the Parent process which is killed
 	@param pointer the child process*/
 	void KillOrphan(Process* p);
-
+	virtual ~Processor();
 };
 
 #include"../Scheduler/Scheduler.h"

@@ -23,9 +23,9 @@ void UI::UpdateInterface(Scheduler* SchedPtr, int mode) const
 				cout << " [FCFS]: ";
 			else if (i < SchedPtr->GetNFCFS() + SchedPtr->GetNSJF())
 				cout << " [SJF ]: ";
-			else if (i < SchedPtr->GetNFCFS()+ SchedPtr->GetNRR() + SchedPtr->GetNSJF())
+			else if (i < SchedPtr->GetNFCFS() + SchedPtr->GetNRR() + SchedPtr->GetNSJF())
 				cout << " [RR  ]: ";
-			else 
+			else
 				cout << " [EDF ]: ";
 			SchedPtr->PrintProcessor(i);
 		}
@@ -83,3 +83,6 @@ string UI::ReadFileName() const
 	return FileName;
 }
 
+UI::~UI()
+{
+}

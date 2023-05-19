@@ -3,7 +3,7 @@
 class Scheduler;
 class UI
 {
-
+	
 
 public:
 	/*Default constructor */
@@ -14,5 +14,6 @@ public:
 	int ReadMode()const;
 	/*read the input file name from user*/
 	string ReadFileName()const;
+	~UI();
 };
 

@@ -5,28 +5,28 @@
 #include<iostream>
 class Process
 {
-	bool Steal;      // bool true if the process has been stolen
+	bool Steal;           // bool true if the process has been stolen
 	bool Migrate_RR_SJF;  // bool true if the process is migrated from RR->>SJF
 	bool Migrate_FCFS_RR; // bool true if the process is migrated from FCFS->>RR
-	bool IsForked;   // bool true if the process has benn forked 
-	bool IsKilled;   // bool true if the process killed
-	int PID;         // unique id for each process 
-	int AT;          // Arrival time ->tack it frome input file 
-	int RT;          // time that p get the CPU first time 
-	int CT;          // time needed to run p 
-	int TT;          // time when the p finish excution
-	int TRT;         // the total time   TT-AT
-	int WT;          // the total waiting time TRT-CT
-	Queue<Pair*> IO; //First is IO_R ---------- Second is IO_D
-	int NUM_IO;      // number of IO request
-	int RemainingTime;// the time to finish executing and go to terminated list
-	Process* LChild;  // pointer to its left child when forking
-	Process* RChild;  // pointer to its right child when forking
-	Process* Parent;  // pointer to parent process 
-	bool IsChild;     // true if the process is a chiled to another one 
-	int Total_IO_D;   // total duration of io 
-	int TimeToReadyBack;//the time at which the process return to ready queue 
-	int DeadLine;      // time needed to be finished excution before 
+	bool IsForked;        // bool true if the process has benn forked 
+	bool IsKilled;        // bool true if the process killed
+	int PID;              // unique id for each process 
+	int AT;               // Arrival time ->tack it frome input file 
+	int RT;               // time that p get the CPU first time 
+	int CT;               // time needed to run p 
+	int TT;               // time when the p finish excution
+	int TRT;              // the total time   TT-AT
+	int WT;               // the total waiting time TRT-CT
+	Queue<Pair*> IO;      //First is IO_R ---------- Second is IO_D
+	int NUM_IO;           // number of IO request
+	int RemainingTime;    // the time to finish executing and go to terminated list
+	Process* LChild;      // pointer to its left child when forking
+	Process* RChild;      // pointer to its right child when forking
+	Process* Parent;      // pointer to parent process 
+	bool IsChild;         // true if the process is a chiled to another one 
+	int Total_IO_D;       // total duration of io 
+	int TimeToReadyBack;  //the time at which the process return to ready queue 
+	int DeadLine;         // time needed to be finished excution before 
 public:
 	/*defult constructor*/
 	Process();

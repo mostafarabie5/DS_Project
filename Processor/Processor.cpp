@@ -3,15 +3,22 @@
 Processor::Processor()
 {
 	RunningProcess = nullptr;
-	Total_Busy = Total_TRT = Total_Idle = PLoad = PUtil = TimetoFinish = 0;
+	Total_Busy = Total_TRT = Total_Idle = TimetoFinish = 0;
+	PLoad = PUtil = 0;
 	StopMode = false;
 	ActiveAtTime = 0;
+	P_Scheduler = nullptr;
+	ProcessorNumber = 0;
 }
 //------------------------------------------(non default constructor )-------------------------------//
 Processor::Processor(Scheduler* P) :P_Scheduler(P)
 {
 	RunningProcess = nullptr;
-	Total_Busy = Total_TRT = Total_Idle = PLoad = PUtil = TimetoFinish = 0;
+	Total_Busy = Total_TRT = Total_Idle = TimetoFinish = 0;
+	PLoad = PUtil = 0;
+	ProcessorNumber = 0;
+	ActiveAtTime = 0;
+	StopMode = false;
 }
 //----------------------------------(setter functions)---------------------------------------//
 void Processor::SetRunningProcess(Process* p)
@@ -97,6 +104,9 @@ void Processor::KillOrphan(Process* p)
 	KillOrphan(p->getRChild());
 }
 
+Processor::~Processor()
+{
+}
 int Processor::Total_TRT;
 
 

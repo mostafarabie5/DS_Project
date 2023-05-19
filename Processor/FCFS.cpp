@@ -94,13 +94,16 @@ Process* FCFS::Delete_FirstProcess()
 			break;
 	}
 	if (i == ReadyList.getLength())
-		return nullptr;
+		ptr = nullptr;
 	else
 	{
-		TimetoFinish -= ptr->getRemainingTime();
-		ReadyList.remove(i + 1);
-		return ptr;
+		if (ptr) 
+		{
+			TimetoFinish -= ptr->getRemainingTime();
+			ReadyList.remove(i + 1);
+		}
 	}
+	return ptr;
 }
 
 bool FCFS::KillProcess()
@@ -113,8 +116,7 @@ bool FCFS::KillProcess()
 	{
 		while (Signal->First < P_Scheduler->GetTimeStep())
 		{
-			SIGKILL.dequeue(Signal);
-			delete Signal;
+			popKillSignal();
 			if (!SIGKILL.peek(Signal))
 				break;
 		}
@@ -251,5 +253,8 @@ Process* FCFS::removeProcess()
 	return ptr;
 }
 
+FCFS::~FCFS()
+{
+}
 
 Queue<Pair*> FCFS::SIGKILL;

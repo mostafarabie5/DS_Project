@@ -147,10 +147,11 @@ void  Process::setRT(int x)
 bool Process::blk_request(int timestep) const
 {
 	Pair* p = new Pair;
-	IO.peek(p);
-
-	if (p->First == timestep)
-		return true;
+	if (IO.peek(p))
+	{
+		if (p->First == timestep)
+			return true;
+	}
 	return false;
 }
 

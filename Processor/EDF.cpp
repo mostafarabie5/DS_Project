@@ -19,7 +19,7 @@ void EDF::SchedulerAlgo()
 		}
 
 		Total_Busy++;
-
+		Process* Running = RunningProcess;
 		RunningProcess->DecreaseRemainingTime();
 		if (!MoveToTRM())
 		{
@@ -28,6 +28,11 @@ void EDF::SchedulerAlgo()
 				P_Scheduler->AddToBLK(RunningProcess);
 				RunningProcess = nullptr;
 			}
+		}
+		else
+		{
+			KillOrphan(Running->getLChild());
+			KillOrphan(Running->getRChild());
 		}
 	}
 	else {
@@ -76,4 +81,8 @@ Process* EDF::Delete_FirstProcess()
 bool EDF::Ready_isEmpty()const
 {
 	return ReadyList.isEmpty();
+}
+
+EDF::~EDF()
+{
 }

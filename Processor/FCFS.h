@@ -33,5 +33,6 @@ public:
 	void AddForkedProcess();
 	//Remove first process from the ready list (forked or not) when Overheat Processor
 	Process* removeProcess();
+	~FCFS();
 };
 
