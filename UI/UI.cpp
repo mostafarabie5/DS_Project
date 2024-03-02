@@ -58,7 +58,7 @@ void UI::UpdateInterface(Scheduler* SchedPtr, int mode) const
 		}
 		else
 		{
-			Sleep(1);
+			Sleep(1000);
 		}
 	}
 	else
